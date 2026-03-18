@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English Class Screen</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Noto Sans KR (기본), Gowun Batang (바탕체), Nanum Pen Script (펜글씨), Hi Melody (귀여운체) -->
+    <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang&family=Hi+Melody&family=Nanum+Pen+Script&family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* 추가된 커스텀 폰트 로드 */
+        @font-face {
+            font-family: 'LetsTraceRuled';
+            /* 서버나 같은 폴더에 파일이 있으면 자동으로 불러와 적용됩니다. */
+            src: local('LetsTraceRuled'), 
+                 local('Lets Trace ruled'), 
+                 url('letstrace.s-trace-ruled.otf') format('opentype');
+        }
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            transition: background-image 0.5s ease;
+            overflow: hidden; /* Act like a screen */
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+        }
+
+        /* Draggable Widget Base */
+        .widget {
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden; /* For rounded corners */
+            border: 2px dashed transparent; 
+            resize: both; /* 사용자가 크기를 자유롭게 조절할 수 있도록 추가 */
+            overflow: auto; /* resize 핸들이 보이도록 */
+        }
+        /* 위젯 내부 스크롤바 커스텀 (크기 조절 시 깔끔하게 보이기 위함) */
+        .widget::-webkit-scrollbar { width: 8px; height: 8px; }
+        .widget::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .widget::-webkit-scrollbar-track { background: transparent; }
+
+        .widget-header {
+            padding: 10px;
+            background-color: #F3F4F6;
+            cursor: grab;
+            text-align: center;
+            color: #9CA3AF;
+            border-bottom: 1px solid #E5E7EB;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.8rem;
+            position: sticky;
+            top: 0;
+            z-index: 20;
+        }
+        .widget-header:active { cursor: grabbing; }
+
+        .widget-content {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            flex-grow: 1; /* 위젯 크기가 커지면 내용 영역도 같이 커지게 */
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            cursor: pointer;
+            color: #D1D5DB;
+            font-size: 1.2rem;
+            transition: color 0.2s;
+            z-index: 50; /* Z-index 높임 */
+        }
+        .close-btn:hover { color: #EF4444; }
+
+
+        /* --- Clock Widget --- */
+        #widget-clock { min-width: 300px; min-height: 150px; }
+        .clock-time-container {
+            display: flex;
+            align-items: baseline;
+            justify-content: center;
+        }
+        .clock-time {
+            font-size: 4.5rem;
+            font-weight: 300;
+            color: #1F2937;
+            line-height: 1;
+        }
+        .clock-ampm {
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: #6B7280;
+            margin-left: 10px;
+        }
+        .clock-date {
+            font-size: 1.1rem;
+            color: #4B5563;
+            margin-top: 10px;
+            font-weight: 400;
+        }
+
+
+        /* --- Timer Widget --- */
+        #widget-timer { min-width: 350px; min-height: 250px; }
+        .timer-display {
+            font-size: 5rem;
+            font-weight: 700;
+            color: #1F2937;
+            font-variant-numeric: tabular-nums;
+            line-height: 1;
+            margin: 10px 0;
+            letter-spacing: 2px;
+            text-align: center;
+            border: none;
+            background: transparent;
+            outline: none;
+            width: 100%;
+            cursor: text;
+        }
+        .timer-display:focus {
+            color: #4F46E5;
+        }
+        .timer-display[readonly] {
+            cursor: default;
+        }
+        .timer-btn {
+            background-color: #6366F1;
+            color: white;
+            border-radius: 50%;
+            width: 55px;
+            height: 55px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: transform 0.1s, background-color 0.2s;
+            border: none;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .timer-btn:active { transform: scale(0.95); }
+        .timer-btn:hover { background-color: #4F46E5; }
+        .timer-btn.stop { background-color: #EF4444; }
+        .timer-btn.stop:hover { background-color: #DC2626; }
+        .timer-btn.reset { background-color: #9CA3AF; }
+        .timer-btn.reset:hover { background-color: #6B7280; }
+        
+        .time-adjust-row {
+            display: flex;
+            width: 100%;
+            justify-content: space-around;
+            padding: 0 30px;
+        }
+        .time-adjust {
+            color: #9CA3AF;
+            cursor: pointer;
+            font-size: 1.5rem;
+            padding: 5px 20px;
+            border-radius: 0.5rem;
+            transition: all 0.2s;
+        }
+        .time-adjust:hover {
+            background-color: #F3F4F6;
+            color: #374151;
+        }
+
+
+        /* --- Voice Level Widget --- */
+        #widget-voice { min-width: 380px; min-height: 400px; }
+        .voice-title-bar {
+            width: 100%;
+            text-align: center;
+            font-weight: 900;
+            font-size: 1.5rem;
+            padding-bottom: 15px;
+            border-bottom: 2px dashed #E5E7EB;
+            margin-bottom: 15px;
+            color: #1F2937;
+        }
+        .voice-level {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            padding: 12px 20px;
+            margin-bottom: 12px;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background-color: #F3F4F6;
+            border: 2px solid #E5E7EB;
+            color: #9CA3AF;
+        }
+
+        .voice-level:hover {
+            background-color: #E5E7EB;
+        }
+
+        .voice-number {
+            font-size: 1.8rem;
+            font-weight: 900;
+            margin-right: 25px;
+            width: 30px;
+            text-align: center;
+            opacity: 0.5;
+        }
+
+        .voice-text {
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+        .voice-subtext {
+            font-size: 1rem;
+            font-weight: 400;
+            margin-left: 10px;
+        }
+
+        .voice-level.active {
+            transform: scale(1.02);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            color: white;
+            border-color: transparent;
+        }
+        .voice-level.active .voice-number {
+            opacity: 1;
+        }
+
+        .voice-level.active.level-0 { background-color: #E34A33; }
+        .voice-level.active.level-1 { background-color: #F18F24; }
+        .voice-level.active.level-2 { background-color: #E6C844; color: #555; } 
+        .voice-level.active.level-3 { background-color: #79A354; }
+        .voice-level.active.level-4 { background-color: #5B9BD5; }
+
+        /* --- English Note Widget --- */
+        #widget-note { 
+            min-width: 650px; 
+            min-height: 350px; 
+        }
+        #widget-note .widget-content {
+            padding: 0;
+            align-items: stretch;
+            justify-content: flex-start;
+        }
+        .note-toolbar {
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            background-color: #f9fafb;
+            border-bottom: 1px solid #e5e7eb;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .note-btn {
+            background: white;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            padding: 5px 12px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #374151;
+            font-weight: bold;
+        }
+        .note-btn:hover { background-color: #e5e7eb; }
+        
+        /* 색상 변경 버튼 스타일 */
+        .color-picker-group {
+            display: flex;
+            gap: 8px;
+            margin-left: 10px;
+            padding-left: 15px;
+            border-left: 2px solid #e5e7eb;
+            align-items: center;
+        }
+        .color-btn {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: transform 0.1s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .color-btn:hover { transform: scale(1.15); }
+        .color-btn:active { transform: scale(0.9); }
+
+        .note-info {
+            font-size: 0.75rem;
+            color: #6b7280;
+            margin-left: auto;
+        }
+
+        .note-input-container {
+            flex-grow: 1;
+            width: 100%;
+            height: 100%;
+            background-color: #ffffff;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 여러 색상 지원을 위해 textarea 대신 contenteditable div 사용 */
+        #english-note-input {
+            width: 100%;
+            flex-grow: 1;
+            min-height: 100px;
+            border: none;
+            outline: none;
+            /* 우선순위 1: LetsTraceRuled (영어/숫자 4선지 적용)
+               우선순위 2: Noto Sans KR (한글 적용 기본값)
+            */
+            font-family: 'LetsTraceRuled', 'Noto Sans KR', sans-serif;
+            font-size: 80px; 
+            line-height: 1.2;
+            color: #1f2937;
+            background: transparent;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        /* contenteditable div의 placeholder 역할 */
+        #english-note-input[placeholder]:empty:before {
+            content: attr(placeholder);
+            color: #9ca3af;
+            pointer-events: none;
+            display: block;
+        }
+
+        /* --- Dictionary Widget --- */
+        #widget-dict {
+            min-width: 400px;
+            min-height: 500px;
+            width: 450px;
+            height: 600px;
+        }
+        #widget-dict .widget-content {
+            padding: 0;
+            align-items: stretch;
+            justify-content: stretch;
+        }
+
+        /* --- Bottom Toolbar --- */
+        .toolbar-container {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            z-index: 1000;
+        }
+
+        .toolbar-group {
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 10px;
+            border-radius: 1rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+            display: flex;
+            gap: 10px;
+        }
+
+        .tool-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 65px;
+            height: 65px;
+            border-radius: 0.5rem;
+            border: none;
+            background-color: transparent;
+            cursor: pointer;
+            color: #4B5563;
+            transition: all 0.2s;
+        }
+
+        .tool-btn:hover {
+            background-color: #F3F4F6;
+            color: #111827;
+            transform: translateY(-2px);
+        }
+
+        .tool-btn.active {
+            color: #4F46E5;
+            background-color: #EEF2FF;
+        }
+
+        .tool-btn i {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        .tool-btn span {
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        /* --- Background Selector --- */
+        .bg-selector-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .bg-btn {
+            background-color: rgba(255, 255, 255, 0.9);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            color: #4B5563;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            transition: all 0.2s;
+            border: none;
+        }
+        .bg-btn:hover {
+            background-color: white;
+            color: #111827;
+            transform: scale(1.05);
+        }
+
+        .bg-menu {
+            display: none;
+            position: absolute;
+            top: 60px;
+            right: 0;
+            background-color: white;
+            border-radius: 1rem;
+            padding: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            width: 320px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .bg-menu.show {
+            display: grid;
+        }
+
+        .bg-thumb {
+            width: 100%;
+            height: 60px;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: border-color 0.2s;
+            background-size: cover;
+            background-position: center;
+        }
+        .bg-thumb:hover {
+            border-color: #4F46E5;
+        }
+
+        /* 업로드 버튼 전용 스타일 */
+        .upload-thumb {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #F3F4F6;
+            border: 2px dashed #D1D5DB;
+            color: #6B7280;
+            font-size: 1.5rem;
+        }
+        .upload-thumb:hover {
+            border-color: #4F46E5;
+            color: #4F46E5;
+            background-color: #EEF2FF;
+        }
+
+        /* Bell animation */
+        @keyframes shake {
+            0% { transform: rotate(0deg); }
+            25% { transform: rotate(15deg); }
+            50% { transform: rotate(0deg); }
+            75% { transform: rotate(-15deg); }
+            100% { transform: rotate(0deg); }
+        }
+        .ringing {
+            animation: shake 0.3s ease-in-out infinite;
+            color: #F59E0B !important;
+        }
+
+        /* --- Dock Toggle --- */
+        .dock-toggle-btn {
+            position: fixed;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1001;
+            background-color: rgba(255, 255, 255, 0.85);
+            border: none;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+            transition: all 0.3s ease;
+            color: #6B7280;
+            font-size: 0.9rem;
+        }
+        .dock-toggle-btn:hover {
+            background-color: white;
+            color: #4F46E5;
+            transform: translateX(-50%) scale(1.1);
+        }
+
+        .toolbar-container {
+            transition: transform 0.4s ease, opacity 0.3s ease;
+        }
+        .toolbar-container.hidden {
+            transform: translateX(-50%) translateY(120%);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+    </style>
+</head>
+<body id="main-body">
+
+    <!-- Audio for Bell (선생님이 직접 준비한 소리 파일 연결) -->
+    <audio id="bell-sound" preload="auto">
+        <!-- 같은 폴더에 my-bell.mp3 파일을 넣으면 이 소리가 재생됩니다. -->
+        <source src="my-bell.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Background Upload Input (Hidden) -->
+    <input type="file" id="bg-upload-input" accept="image/*" style="display: none;">
+
+    <!-- Background Selector -->
+    <div class="bg-selector-container">
+        <button class="bg-btn" onclick="toggleBgMenu()" title="배경화면 변경">
+            <i class="fas fa-image"></i>
+        </button>
+        <div id="bg-menu" class="bg-menu">
+            <!-- Background thumbnails will be generated here by JS -->
+        </div>
+    </div>
+
+    <!-- Widgets -->
+    
+    <!-- 1. Clock Widget -->
+    <div id="widget-clock" class="widget" style="top: 50px; left: 50px; display: none;">
+        <div class="widget-header"><i class="fas fa-grip-lines"></i></div>
+        <div class="widget-content">
+            <i class="fas fa-times close-btn" onclick="toggleWidget('widget-clock', 'btn-clock')"></i>
+            <div class="clock-time-container">
+                <span id="clock-time" class="clock-time">12:00</span>
+                <span id="clock-ampm" class="clock-ampm">PM</span>
+            </div>
+            <div id="clock-date" class="clock-date">2026년 1월 1일 목요일</div>
+        </div>
+    </div>
+
+    <!-- 2. Timer Widget -->
+    <div id="widget-timer" class="widget" style="top: 50px; left: 400px; display: none;">
+        <div class="widget-header"><i class="fas fa-grip-lines"></i></div>
+        <div class="widget-content">
+            <i class="fas fa-times close-btn" onclick="toggleWidget('widget-timer', 'btn-timer')"></i>
+            
+            <div class="time-adjust-row">
+                <button class="time-adjust" onclick="adjustTime(60)"><i class="fas fa-chevron-up"></i></button>
+                <button class="time-adjust" onclick="adjustTime(1)"><i class="fas fa-chevron-up"></i></button>
+            </div>
+            
+            <!-- 타이머 디스플레이를 입력 가능한 input으로 변경 -->
+            <input type="text" id="timer-display" class="timer-display" value="10:00" title="클릭하여 시간 입력 (예: 30, 1:30)">
+            
+            <div class="time-adjust-row mb-6">
+                <button class="time-adjust" onclick="adjustTime(-60)"><i class="fas fa-chevron-down"></i></button>
+                <button class="time-adjust" onclick="adjustTime(-1)"><i class="fas fa-chevron-down"></i></button>
+            </div>
+
+            <div class="flex gap-6">
+                <button id="timer-toggle-btn" class="timer-btn" onclick="toggleTimer()">
+                    <i class="fas fa-play" style="margin-left: 5px;"></i>
+                </button>
+                <button class="timer-btn reset" onclick="resetTimer()">
+                    <i class="fas fa-redo"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. Voice Level Widget -->
+    <div id="widget-voice" class="widget" style="top: 50px; left: 800px; display: none;">
+        <div class="widget-header"><i class="fas fa-grip-lines"></i></div>
+        <div class="widget-content w-full" style="padding: 20px 30px;">
+            <i class="fas fa-times close-btn" onclick="toggleWidget('widget-voice', 'btn-voice')"></i>
+            
+            <div class="voice-title-bar">
+                목소리 크기 조절 신호
+            </div>
+
+            <div class="voice-level level-0" onclick="setVoiceLevel(0)">
+                <div class="voice-number">0</div>
+                <div style="display: flex; align-items: baseline;">
+                    <span class="voice-text">혼자</span>
+                    <span class="voice-subtext">(소리 없이)</span>
+                </div>
+            </div>
+            <div class="voice-level level-1" onclick="setVoiceLevel(1)">
+                <div class="voice-number">1</div>
+                <div style="display: flex; align-items: baseline;">
+                    <span class="voice-text">둘이</span>
+                    <span class="voice-subtext">(소곤소곤)</span>
+                </div>
+            </div>
+            <div class="voice-level level-2" onclick="setVoiceLevel(2)">
+                <div class="voice-number">2</div>
+                <div style="display: flex; align-items: baseline;">
+                    <span class="voice-text">모둠</span>
+                    <span class="voice-subtext">(도란도란)</span>
+                </div>
+            </div>
+            <div class="voice-level level-3" onclick="setVoiceLevel(3)">
+                <div class="voice-number">3</div>
+                <div style="display: flex; align-items: baseline;">
+                    <span class="voice-text">발표</span>
+                    <span class="voice-subtext">(우렁차게)</span>
+                </div>
+            </div>
+            <div class="voice-level level-4" onclick="setVoiceLevel(4)">
+                <div class="voice-number">4</div>
+                <div style="display: flex; align-items: baseline;">
+                    <span class="voice-text">운동장</span>
+                    <span class="voice-subtext">(고래고래)</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. English Note Widget -->
+    <div id="widget-note" class="widget" style="top: 350px; left: 50px; display: none;">
+        <div class="widget-header"><i class="fas fa-grip-lines"></i></div>
+        <div class="widget-content">
+            <i class="fas fa-times close-btn" onclick="toggleWidget('widget-note', 'btn-note')"></i>
+            
+            <div class="note-toolbar">
+                <button class="note-btn" onclick="changeNoteFontSize(10)" title="글자 크게"><i class="fas fa-search-plus"></i></button>
+                <button class="note-btn" onclick="changeNoteFontSize(-10)" title="글자 작게"><i class="fas fa-search-minus"></i></button>
+                
+                <!-- 텍스트 색상 변경 도구 -->
+                <div class="color-picker-group">
+                    <button class="color-btn" style="background-color: #1f2937;" onclick="changeTextColor('#1f2937')" title="검정색"></button>
+                    <button class="color-btn" style="background-color: #ef4444;" onclick="changeTextColor('#ef4444')" title="빨간색"></button>
+                    <button class="color-btn" style="background-color: #3b82f6;" onclick="changeTextColor('#3b82f6')" title="파란색"></button>
+                </div>
+                
+                <!-- 한글 폰트 선택기 추가 -->
+                <select class="note-btn ml-3" style="font-weight: 500;" onchange="changeKoreanFont(this.value)" title="한글 글씨체 변경 (영어는 4선지 고정)">
+                    <option value="Noto Sans KR">한글: 기본 고딕체</option>
+                    <option value="Gowun Batang">한글: 단정한 바탕체</option>
+                    <option value="Nanum Pen Script">한글: 펜글씨체</option>
+                    <option value="Hi Melody">한글: 동글 귀여운체</option>
+                </select>
+
+                <button class="note-btn ml-3" onclick="clearNote()" title="전체 지우기"><i class="fas fa-eraser"></i></button>
+                <span class="note-info"><i class="fas fa-info-circle"></i> </span>
+            </div>
+
+            <div class="note-input-container">
+                <!-- textarea 대신 색상 및 서식이 적용되는 contenteditable 영역 사용 -->
+                <div id="english-note-input" contenteditable="true" spellcheck="false" placeholder=" Type your English sentence here..."></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. Dictionary Widget -->
+    <div id="widget-dict" class="widget" style="top: 150px; left: 700px; display: none;">
+        <div class="widget-header"><i class="fas fa-grip-lines"></i></div>
+        <div class="widget-content">
+            <i class="fas fa-times close-btn" onclick="toggleWidget('widget-dict', 'btn-dict')" style="background: rgba(255,255,255,0.9); border-radius: 50%; width: 24px; height: 24px; display: flex; justify-content: center; align-items: center; top: 10px; right: 10px;"></i>
+            
+            <!-- 네이버 사전 외부 링크 열기 버튼 (iframe 차단 대비용) -->
+            <div style="position: absolute; top: 10px; left: 15px; z-index: 10;">
+                <button onclick="window.open('https://en.dict.naver.com/#/main', 'naverDict', 'width=500,height=700');" class="bg-white border border-gray-300 rounded px-3 py-1 text-xs text-blue-600 hover:bg-gray-100 shadow-sm font-bold" title="네이버 사전 보안 정책으로 화면이 안 보일 경우 새 창으로 열어주세요">
+                    <i class="fas fa-external-link-alt"></i> 새 창으로 열기
+                </button>
+            </div>
+
+            <iframe src="https://en.dict.naver.com/#/main" class="w-full h-full border-none flex-grow" title="네이버 영어사전"></iframe>
+        </div>
+    </div>
+
+    <!-- Dock Toggle Button -->
+    <button id="dock-toggle" class="dock-toggle-btn" onclick="toggleDock()" title="도구 모음 숨기기/보이기">
+        <i class="fas fa-chevron-down"></i>
+    </button>
+
+    <!-- Bottom Toolbar -->
+    <div class="toolbar-container" id="toolbar-container">
+        <!-- Widget Toggles -->
+        <div class="toolbar-group">
+            <button id="btn-clock" class="tool-btn" onclick="toggleWidget('widget-clock', 'btn-clock')">
+                <i class="far fa-clock"></i>
+                <span>시계</span>
+            </button>
+            <button id="btn-timer" class="tool-btn" onclick="toggleWidget('widget-timer', 'btn-timer')">
+                <i class="fas fa-hourglass-half"></i>
+                <span>타이머</span>
+            </button>
+            <button id="btn-voice" class="tool-btn" onclick="toggleWidget('widget-voice', 'btn-voice')">
+                <i class="fas fa-bullhorn"></i>
+                <span>목소리</span>
+            </button>
+            <button id="btn-note" class="tool-btn" onclick="toggleWidget('widget-note', 'btn-note')">
+                <i class="fas fa-book-open"></i>
+                <span>영어노트</span>
+            </button>
+            <button id="btn-dict" class="tool-btn" onclick="toggleWidget('widget-dict', 'btn-dict')">
+                <i class="fas fa-book"></i>
+                <span>사전</span>
+            </button>
+        </div>
+        
+        <!-- Action Buttons -->
+        <div class="toolbar-group">
+            <button id="btn-bell" class="tool-btn" onclick="ringBell()">
+                <i class="fas fa-bell"></i>
+                <span>탁상벨</span>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // 0. Background Management
+        // ==========================================
+        const backgrounds = [
+            'https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80',
+            'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80',
+            'https://images.unsplash.com/photo-1518173946687-a4c8892bbd9f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80',
+            'https://images.unsplash.com/photo-1472214103451-9374bd1c798e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80',
+            'https://images.unsplash.com/photo-1499002236252-7001a189f7fb?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80',
+            'https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80',
+            'https://images.unsplash.com/photo-1513694203232-719a280e022f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80',
+            'https://images.unsplash.com/photo-1501862700950-18382cd41497?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80',
+            'https://images.unsplash.com/photo-1557682224-5b8590cd9ec5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80',
+            'https://images.unsplash.com/photo-1604147706283-d7119b5b822c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80'
+        ];
+
+        function initBackgrounds() {
+            const body = document.getElementById('main-body');
+            const menu = document.getElementById('bg-menu');
+            
+            body.style.backgroundImage = `url('${backgrounds[0]}')`;
+
+            // 1. 이미지 업로드 버튼 썸네일 추가
+            const uploadThumb = document.createElement('div');
+            uploadThumb.className = 'bg-thumb upload-thumb';
+            uploadThumb.innerHTML = '<i class="fas fa-plus"></i>';
+            uploadThumb.title = '내 PC에서 사진 업로드';
+            uploadThumb.onclick = () => document.getElementById('bg-upload-input').click();
+            menu.appendChild(uploadThumb);
+
+            // 2. 기본 배경화면 썸네일들 추가
+            backgrounds.forEach(bgUrl => {
+                const thumb = document.createElement('div');
+                thumb.className = 'bg-thumb';
+                thumb.style.backgroundImage = `url('${bgUrl}')`;
+                thumb.onclick = () => {
+                    body.style.backgroundImage = `url('${bgUrl}')`;
+                    toggleBgMenu(); 
+                };
+                menu.appendChild(thumb);
+            });
+        }
+
+        // 이미지 파일 업로드 이벤트 핸들러
+        document.getElementById('bg-upload-input').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const imgUrl = event.target.result;
+                    const body = document.getElementById('main-body');
+                    const menu = document.getElementById('bg-menu');
+                    
+                    // 즉시 배경화면 변경
+                    body.style.backgroundImage = `url('${imgUrl}')`;
+                    
+                    // 메뉴에 방금 업로드한 이미지 썸네일 추가 (업로드 버튼 바로 다음에)
+                    const customThumb = document.createElement('div');
+                    customThumb.className = 'bg-thumb';
+                    customThumb.style.backgroundImage = `url('${imgUrl}')`;
+                    customThumb.onclick = () => {
+                        body.style.backgroundImage = `url('${imgUrl}')`;
+                        toggleBgMenu();
+                    };
+                    menu.insertBefore(customThumb, menu.children[1]);
+
+                    toggleBgMenu(); // 메뉴 닫기
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        function toggleBgMenu() {
+            document.getElementById('bg-menu').classList.toggle('show');
+        }
+
+        window.onclick = function(event) {
+            if (!event.target.closest('.bg-selector-container')) {
+                const menu = document.getElementById('bg-menu');
+                if (menu.classList.contains('show')) {
+                    menu.classList.remove('show');
+                }
+            }
+        }
+
+
+        // ==========================================
+        // 1. Draggable Elements Logic
+        // ==========================================
+        function makeDraggable(element) {
+            let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+            const header = element.querySelector('.widget-header');
+            
+            if (header) {
+                header.onmousedown = dragMouseDown;
+            }
+
+            function dragMouseDown(e) {
+                // Prevent drag if clicking on the resize handle area (bottom right)
+                // Since header is at the top, this usually isn't an issue unless the element is tiny
+                e.preventDefault();
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                document.onmouseup = closeDragElement;
+                document.onmousemove = elementDrag;
+                
+                document.querySelectorAll('.widget').forEach(w => w.style.zIndex = 10);
+                element.style.zIndex = 100;
+            }
+
+            function elementDrag(e) {
+                e.preventDefault();
+                pos1 = pos3 - e.clientX;
+                pos2 = pos4 - e.clientY;
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                element.style.top = (element.offsetTop - pos2) + "px";
+                element.style.left = (element.offsetLeft - pos1) + "px";
+            }
+
+            function closeDragElement() {
+                document.onmouseup = null;
+                document.onmousemove = null;
+            }
+        }
+
+        // ==========================================
+        // 2. Toolbar & Widget Toggle Logic
+        // ==========================================
+        function toggleWidget(widgetId, btnId) {
+            const widget = document.getElementById(widgetId);
+            const btn = document.getElementById(btnId);
+            
+            if (widget.style.display === "none" || widget.style.display === "") {
+                widget.style.display = "flex";
+                if(btn) btn.classList.add('active');
+                
+                document.querySelectorAll('.widget').forEach(w => w.style.zIndex = 10);
+                widget.style.zIndex = 100;
+            } else {
+                widget.style.display = "none";
+                if(btn) btn.classList.remove('active');
+            }
+        }
+
+        // ==========================================
+        // 3. Clock Logic
+        // ==========================================
+        function updateClock() {
+            const now = new Date();
+            let hours = now.getHours();
+            let minutes = now.getMinutes();
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            
+            hours = hours % 12;
+            hours = hours ? hours : 12; 
+            minutes = minutes < 10 ? '0' + minutes : minutes;
+            
+            document.getElementById('clock-time').textContent = hours + ':' + minutes;
+            document.getElementById('clock-ampm').textContent = ampm;
+
+            const days = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
+            const dateString = `${now.getFullYear()}년 ${now.getMonth() + 1}월 ${now.getDate()}일 ${days[now.getDay()]}`;
+            document.getElementById('clock-date').textContent = dateString;
+        }
+
+        // ==========================================
+        // 4. Timer Logic
+        // ==========================================
+        let timerDuration = 600; 
+        let timeRemaining = 600;
+        let timerInterval = null;
+        let isTimerRunning = false;
+
+        function updateTimerDisplay() {
+            if (timeRemaining < 0) timeRemaining = 0;
+            const m = Math.floor(timeRemaining / 60);
+            const s = timeRemaining % 60;
+            // input value 로 업데이트합니다.
+            document.getElementById('timer-display').value = 
+                `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+        }
+
+        function adjustTime(seconds) {
+            if (isTimerRunning) return; 
+            timeRemaining += seconds;
+            if (timeRemaining < 0) timeRemaining = 0;
+            timerDuration = timeRemaining; 
+            updateTimerDisplay();
+        }
+
+        function toggleTimer() {
+            const btn = document.getElementById('timer-toggle-btn');
+            const icon = btn.querySelector('i');
+            const timerInput = document.getElementById('timer-display');
+
+            if (isTimerRunning) {
+                clearInterval(timerInterval);
+                isTimerRunning = false;
+                btn.classList.remove('stop');
+                icon.className = 'fas fa-play';
+                icon.style.marginLeft = "5px"; 
+                timerInput.readOnly = false; // 타이머 멈춤 시 편집 허용
+            } else {
+                if (timeRemaining <= 0) return;
+                isTimerRunning = true;
+                btn.classList.add('stop');
+                icon.className = 'fas fa-pause';
+                icon.style.marginLeft = "0"; 
+                timerInput.readOnly = true; // 타이머 작동 시 편집 불가
+                
+                timerInterval = setInterval(() => {
+                    timeRemaining--;
+                    updateTimerDisplay();
+                    
+                    if (timeRemaining <= 0) {
+                        clearInterval(timerInterval);
+                        isTimerRunning = false;
+                        btn.classList.remove('stop');
+                        icon.className = 'fas fa-play';
+                        icon.style.marginLeft = "5px";
+                        timerInput.readOnly = false; // 완료 시 편집 허용
+                        
+                        ringBell();
+                    }
+                }, 1000);
+            }
+        }
+
+        function resetTimer() {
+            if (isTimerRunning) {
+                clearInterval(timerInterval);
+                isTimerRunning = false;
+                const btn = document.getElementById('timer-toggle-btn');
+                const icon = btn.querySelector('i');
+                btn.classList.remove('stop');
+                icon.className = 'fas fa-play';
+                icon.style.marginLeft = "5px";
+            }
+            document.getElementById('timer-display').readOnly = false;
+            timeRemaining = timerDuration;
+            updateTimerDisplay();
+        }
+        
+        // 텍스트를 파싱하여 초로 변환하는 함수
+        function parseTimeInput(inputStr) {
+            if (!inputStr) return 0;
+            let parts = inputStr.split(':');
+            
+            // "1:30" 형식 처리
+            if (parts.length === 2) {
+                let m = parseInt(parts[0]) || 0;
+                let s = parseInt(parts[1]) || 0;
+                return m * 60 + s;
+            } 
+            // "30" 같은 단일 숫자 처리 (초 단위로 인식)
+            else if (parts.length === 1) {
+                let val = parseInt(parts[0]) || 0;
+                return val;
+            }
+            return 0;
+        }
+
+        // ==========================================
+        // 5. Voice Level Logic
+        // ==========================================
+        function setVoiceLevel(levelIndex) {
+            const levels = document.querySelectorAll('.voice-level');
+            let isAlreadyActive = false;
+
+            levels.forEach((level, index) => {
+                if(index === levelIndex && level.classList.contains('active')) {
+                    isAlreadyActive = true;
+                }
+                level.classList.remove('active');
+            });
+
+            if (!isAlreadyActive) {
+                const targetLevel = document.querySelector('.level-' + levelIndex);
+                if (targetLevel) {
+                    targetLevel.classList.add('active');
+                }
+            }
+        }
+
+        // ==========================================
+        // 6. Bell Logic
+        // ==========================================
+        function ringBell() {
+            const bellBtn = document.getElementById('btn-bell');
+            const icon = bellBtn.querySelector('i');
+            const audio = document.getElementById('bell-sound');
+            
+            audio.currentTime = 0; 
+            audio.play().catch(e => console.log("Audio play failed:", e));
+
+            icon.classList.add('ringing');
+            setTimeout(() => {
+                icon.classList.remove('ringing');
+            }, 600); 
+        }
+
+        // ==========================================
+        // 7. English Note Logic (크기/색상 제어 및 공백 처리 추가)
+        // ==========================================
+        let currentNoteFontSize = 80;
+
+        function changeNoteFontSize(delta) {
+            currentNoteFontSize += delta;
+            if (currentNoteFontSize < 30) currentNoteFontSize = 30;
+            if (currentNoteFontSize > 200) currentNoteFontSize = 200;
+            
+            const noteInput = document.getElementById('english-note-input');
+            noteInput.style.fontSize = currentNoteFontSize + 'px';
+        }
+
+        function changeTextColor(color) {
+            // contenteditable 내에서 선택된 텍스트 색상 변경
+            document.execCommand('styleWithCSS', false, true);
+            document.execCommand('foreColor', false, color);
+            
+            // 편집기로 다시 포커스를 돌려 바로 타이핑할 수 있게 함
+            document.getElementById('english-note-input').focus();
+        }
+
+        function changeKoreanFont(fontName) {
+            const noteInput = document.getElementById('english-note-input');
+            // 영어는 LetsTraceRuled로 고정하고, 그 폰트에 없는 글자(한글)에 대해서만 선택한 폰트를 적용합니다.
+            noteInput.style.fontFamily = `'LetsTraceRuled', '${fontName}', sans-serif`;
+            noteInput.focus();
+        }
+
+        function clearNote() {
+            // contenteditable div 내용 초기화
+            document.getElementById('english-note-input').innerHTML = '';
+            document.getElementById('english-note-input').focus();
+        }
+
+        // ==========================================
+        // 8. Dock Toggle Logic
+        // ==========================================
+        let isDockVisible = true;
+
+        function toggleDock() {
+            const toolbar = document.getElementById('toolbar-container');
+            const toggleBtn = document.getElementById('dock-toggle');
+            const icon = toggleBtn.querySelector('i');
+
+            isDockVisible = !isDockVisible;
+
+            if (isDockVisible) {
+                toolbar.classList.remove('hidden');
+                icon.className = 'fas fa-chevron-down';
+                toggleBtn.title = '도구 모음 숨기기';
+                toggleBtn.style.bottom = '10px';
+            } else {
+                toolbar.classList.add('hidden');
+                icon.className = 'fas fa-chevron-up';
+                toggleBtn.title = '도구 모음 보이기';
+                toggleBtn.style.bottom = '10px';
+            }
+        }
+
+        // ==========================================
+        // Initialization
+        // ==========================================
+        window.onload = () => {
+            initBackgrounds();
+            document.querySelectorAll('.widget').forEach(makeDraggable);
+            
+            setInterval(updateClock, 1000);
+            updateClock();
+            
+            updateTimerDisplay();
+
+            // 타이머 수동 입력 이벤트 설정
+            const timerInput = document.getElementById('timer-display');
+            
+            // 클릭 시 전체 선택
+            timerInput.addEventListener('click', function() {
+                if (!isTimerRunning) {
+                    this.select();
+                }
+            });
+
+            // 포커스를 잃을 때(입력 완료) 시간 반영
+            timerInput.addEventListener('blur', function() {
+                if (!isTimerRunning) {
+                    let newTime = parseTimeInput(this.value);
+                    timeRemaining = newTime;
+                    timerDuration = newTime; // 리셋할 때 돌아갈 기준 시간으로 저장
+                    updateTimerDisplay();
+                }
+            });
+
+            // 엔터 키 입력 시 포커스 해제하여 시간 반영 적용
+            timerInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    this.blur();
+                }
+            });
+
+            // ★ 영어 노트 폰트 선 끊김 방지 코드 ★
+            const noteInput = document.getElementById('english-note-input');
+            noteInput.addEventListener('keydown', function(e) {
+                // 스페이스바를 눌렀을 때
+                if (e.key === ' ') {
+                    e.preventDefault();
+                    // 일반 공백을 만나면 브라우저가 선 렌더링을 뚝 끊어버립니다.
+                    // 이를 방지하기 위해 '끊어지지 않는 공백(\u00A0)'과 '보이지 않는 줄바꿈 공백(\u200B)'을 조합하여 삽입합니다.
+                    document.execCommand('insertText', false, '\u00A0\u200B');
+                }
+            });
+
+            // 초기 실행 시 기본 위젯 켜기
+            toggleWidget('widget-clock', 'btn-clock');
+            toggleWidget('widget-note', 'btn-note');
+        };
+
+    </script>
+</body>
+</html>
