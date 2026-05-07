@@ -7,17 +7,16 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Google Fonts: Noto Sans KR (기본), Gowun Batang (바탕체), Nanum Pen Script (펜글씨), Hi Melody (귀여운체) -->
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang&family=Hi+Melody&family=Nanum+Pen+Script&family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        /* 추가된 커스텀 폰트 로드 */
+        /* 커스텀 폰트 로드 */
         @font-face {
             font-family: 'LetsTraceRuled';
-            /* 서버나 같은 폴더에 파일이 있으면 자동으로 불러와 적용됩니다. */
             src: local('LetsTraceRuled'), 
                  local('Lets Trace ruled'), 
                  url('letstrace.s-trace-ruled.otf') format('opentype');
@@ -29,7 +28,7 @@
             background-position: center;
             background-attachment: fixed;
             transition: background-image 0.5s ease;
-            overflow: hidden; /* Act like a screen */
+            overflow: hidden; 
             margin: 0;
             padding: 0;
             height: 100vh;
@@ -43,12 +42,11 @@
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
             display: flex;
             flex-direction: column;
-            overflow: hidden; /* For rounded corners */
+            overflow: hidden; 
             border: 2px dashed transparent; 
-            resize: both; /* 사용자가 크기를 자유롭게 조절할 수 있도록 추가 */
-            overflow: auto; /* resize 핸들이 보이도록 */
+            resize: both; 
+            overflow: auto; 
         }
-        /* 위젯 내부 스크롤바 커스텀 (크기 조절 시 깔끔하게 보이기 위함) */
         .widget::-webkit-scrollbar { width: 8px; height: 8px; }
         .widget::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
         .widget::-webkit-scrollbar-track { background: transparent; }
@@ -77,7 +75,7 @@
             align-items: center;
             justify-content: center;
             position: relative;
-            flex-grow: 1; /* 위젯 크기가 커지면 내용 영역도 같이 커지게 */
+            flex-grow: 1; 
         }
 
         .close-btn {
@@ -88,74 +86,31 @@
             color: #D1D5DB;
             font-size: 1.2rem;
             transition: color 0.2s;
-            z-index: 50; /* Z-index 높임 */
+            z-index: 50; 
         }
         .close-btn:hover { color: #EF4444; }
 
 
         /* --- Clock Widget --- */
         #widget-clock { min-width: 300px; min-height: 150px; }
-        .clock-time-container {
-            display: flex;
-            align-items: baseline;
-            justify-content: center;
-        }
-        .clock-time {
-            font-size: 4.5rem;
-            font-weight: 300;
-            color: #1F2937;
-            line-height: 1;
-        }
-        .clock-ampm {
-            font-size: 1.5rem;
-            font-weight: 500;
-            color: #6B7280;
-            margin-left: 10px;
-        }
-        .clock-date {
-            font-size: 1.1rem;
-            color: #4B5563;
-            margin-top: 10px;
-            font-weight: 400;
-        }
-
+        .clock-time-container { display: flex; align-items: baseline; justify-content: center; }
+        .clock-time { font-size: 4.5rem; font-weight: 300; color: #1F2937; line-height: 1; }
+        .clock-ampm { font-size: 1.5rem; font-weight: 500; color: #6B7280; margin-left: 10px; }
+        .clock-date { font-size: 1.1rem; color: #4B5563; margin-top: 10px; font-weight: 400; }
 
         /* --- Timer Widget --- */
         #widget-timer { min-width: 350px; min-height: 250px; }
         .timer-display {
-            font-size: 5rem;
-            font-weight: 700;
-            color: #1F2937;
-            font-variant-numeric: tabular-nums;
-            line-height: 1;
-            margin: 10px 0;
-            letter-spacing: 2px;
-            text-align: center;
-            border: none;
-            background: transparent;
-            outline: none;
-            width: 100%;
-            cursor: text;
+            font-size: 5rem; font-weight: 700; color: #1F2937; font-variant-numeric: tabular-nums;
+            line-height: 1; margin: 10px 0; letter-spacing: 2px; text-align: center;
+            border: none; background: transparent; outline: none; width: 100%; cursor: text;
         }
-        .timer-display:focus {
-            color: #4F46E5;
-        }
-        .timer-display[readonly] {
-            cursor: default;
-        }
+        .timer-display:focus { color: #4F46E5; }
+        .timer-display[readonly] { cursor: default; }
         .timer-btn {
-            background-color: #6366F1;
-            color: white;
-            border-radius: 50%;
-            width: 55px;
-            height: 55px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 1.5rem;
-            cursor: pointer;
-            transition: transform 0.1s, background-color 0.2s;
-            border: none;
+            background-color: #6366F1; color: white; border-radius: 50%; width: 55px; height: 55px;
+            display: flex; justify-content: center; align-items: center; font-size: 1.5rem;
+            cursor: pointer; transition: transform 0.1s, background-color 0.2s; border: none;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
         .timer-btn:active { transform: scale(0.95); }
@@ -165,386 +120,140 @@
         .timer-btn.reset { background-color: #9CA3AF; }
         .timer-btn.reset:hover { background-color: #6B7280; }
         
-        .time-adjust-row {
-            display: flex;
-            width: 100%;
-            justify-content: space-around;
-            padding: 0 30px;
-        }
-        .time-adjust {
-            color: #9CA3AF;
-            cursor: pointer;
-            font-size: 1.5rem;
-            padding: 5px 20px;
-            border-radius: 0.5rem;
-            transition: all 0.2s;
-        }
-        .time-adjust:hover {
-            background-color: #F3F4F6;
-            color: #374151;
-        }
-
-
-        /* --- Voice Level Widget --- */
-        #widget-voice { min-width: 380px; min-height: 400px; }
-        .voice-title-bar {
-            width: 100%;
-            text-align: center;
-            font-weight: 900;
-            font-size: 1.5rem;
-            padding-bottom: 15px;
-            border-bottom: 2px dashed #E5E7EB;
-            margin-bottom: 15px;
-            color: #1F2937;
-        }
-        .voice-level {
-            display: flex;
-            align-items: center;
-            width: 100%;
-            padding: 12px 20px;
-            margin-bottom: 12px;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            background-color: #F3F4F6;
-            border: 2px solid #E5E7EB;
-            color: #9CA3AF;
-        }
-
-        .voice-level:hover {
-            background-color: #E5E7EB;
-        }
-
-        .voice-number {
-            font-size: 1.8rem;
-            font-weight: 900;
-            margin-right: 25px;
-            width: 30px;
-            text-align: center;
-            opacity: 0.5;
-        }
-
-        .voice-text {
-            font-size: 1.2rem;
-            font-weight: 700;
-        }
-        .voice-subtext {
-            font-size: 1rem;
-            font-weight: 400;
-            margin-left: 10px;
-        }
-
-        .voice-level.active {
-            transform: scale(1.02);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-            color: white;
-            border-color: transparent;
-        }
-        .voice-level.active .voice-number {
-            opacity: 1;
-        }
-
-        .voice-level.active.level-0 { background-color: #E34A33; }
-        .voice-level.active.level-1 { background-color: #F18F24; }
-        .voice-level.active.level-2 { background-color: #E6C844; color: #555; } 
-        .voice-level.active.level-3 { background-color: #79A354; }
-        .voice-level.active.level-4 { background-color: #5B9BD5; }
+        .time-adjust-row { display: flex; width: 100%; justify-content: space-around; padding: 0 30px; }
+        .time-adjust { color: #9CA3AF; cursor: pointer; font-size: 1.5rem; padding: 5px 20px; border-radius: 0.5rem; transition: all 0.2s; }
+        .time-adjust:hover { background-color: #F3F4F6; color: #374151; }
 
         /* --- English Note Widget --- */
-        #widget-note { 
-            min-width: 650px; 
-            min-height: 350px; 
-        }
-        #widget-note .widget-content {
-            padding: 0;
-            align-items: stretch;
-            justify-content: flex-start;
-        }
-        .note-toolbar {
-            display: flex;
-            align-items: center;
-            padding: 10px 15px;
-            background-color: #f9fafb;
-            border-bottom: 1px solid #e5e7eb;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-        .note-btn {
-            background: white;
-            border: 1px solid #d1d5db;
-            border-radius: 4px;
-            padding: 5px 12px;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            color: #374151;
-            font-weight: bold;
-        }
+        #widget-note { min-width: 650px; min-height: 350px; }
+        #widget-note .widget-content { padding: 0; align-items: stretch; justify-content: flex-start; }
+        .note-toolbar { display: flex; align-items: center; padding: 10px 15px; background-color: #f9fafb; border-bottom: 1px solid #e5e7eb; gap: 10px; flex-wrap: wrap; }
+        .note-btn { background: white; border: 1px solid #d1d5db; border-radius: 4px; padding: 5px 12px; font-size: 0.9rem; cursor: pointer; transition: all 0.2s; color: #374151; font-weight: bold; }
         .note-btn:hover { background-color: #e5e7eb; }
         
-        /* 색상 변경 버튼 스타일 */
-        .color-picker-group {
-            display: flex;
-            gap: 8px;
-            margin-left: 10px;
-            padding-left: 15px;
-            border-left: 2px solid #e5e7eb;
-            align-items: center;
-        }
-        .color-btn {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            border: 2px solid transparent;
-            cursor: pointer;
-            transition: transform 0.1s;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
+        .color-picker-group { display: flex; gap: 8px; margin-left: 10px; padding-left: 15px; border-left: 2px solid #e5e7eb; align-items: center; }
+        .color-btn { width: 24px; height: 24px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; transition: transform 0.1s; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         .color-btn:hover { transform: scale(1.15); }
         .color-btn:active { transform: scale(0.9); }
 
-        .note-info {
-            font-size: 0.75rem;
-            color: #6b7280;
-            margin-left: auto;
-        }
-
-        .note-input-container {
-            flex-grow: 1;
-            width: 100%;
-            height: 100%;
-            background-color: #ffffff;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* 여러 색상 지원을 위해 textarea 대신 contenteditable div 사용 */
+        .note-info { font-size: 0.75rem; color: #6b7280; margin-left: auto; }
+        .note-input-container { flex-grow: 1; width: 100%; height: 100%; background-color: #ffffff; padding: 20px; display: flex; flex-direction: column; }
         #english-note-input {
-            width: 100%;
-            flex-grow: 1;
-            min-height: 100px;
-            border: none;
-            outline: none;
-            /* 우선순위 1: LetsTraceRuled (영어/숫자 4선지 적용)
-               우선순위 2: Noto Sans KR (한글 적용 기본값)
-            */
-            font-family: 'LetsTraceRuled', 'Noto Sans KR', sans-serif;
-            font-size: 80px; 
-            line-height: 1.2;
-            color: #1f2937;
-            background: transparent;
-            white-space: pre-wrap;
-            word-wrap: break-word;
+            width: 100%; flex-grow: 1; min-height: 100px; border: none; outline: none;
+            font-family: 'LetsTraceRuled', 'Noto Sans KR', sans-serif; font-size: 80px; 
+            line-height: 1.2; color: #1f2937; background: transparent; white-space: pre-wrap; word-wrap: break-word;
         }
-        /* contenteditable div의 placeholder 역할 */
-        #english-note-input[placeholder]:empty:before {
-            content: attr(placeholder);
-            color: #9ca3af;
-            pointer-events: none;
-            display: block;
-        }
+        #english-note-input[placeholder]:empty:before { content: attr(placeholder); color: #9ca3af; pointer-events: none; display: block; }
 
         /* --- Roulette Widget --- */
         #widget-roulette {
-            background: #1a1a2e; /* 룰렛 특유의 다크 테마 */
+            background: #1a1a2e;
             color: #eee;
-            min-width: 780px;
-            min-height: 520px;
+            min-width: 820px;
+            min-height: 580px;
         }
-        /* 다크 테마용 위젯 헤더/닫기 버튼 커스텀 */
-        #widget-roulette .widget-header {
-            background-color: #16213e;
-            border-bottom: 1px solid #0f3460;
-            color: #666;
-        }
+        #widget-roulette .widget-header { background-color: #16213e; border-bottom: 1px solid #0f3460; color: #666; }
         #widget-roulette .close-btn { color: #888; }
         #widget-roulette .close-btn:hover { color: #f0a500; }
-        #widget-roulette .widget-content {
-            flex-direction: row;
-            align-items: flex-start;
-            gap: 30px;
-            padding: 20px 30px;
-        }
+        #widget-roulette .widget-content { flex-direction: row; align-items: flex-start; gap: 30px; padding: 20px 30px; }
         
         .roulette-title {
-            font-size: 1.8rem;
-            margin-bottom: 15px;
-            color: #f0a500;
-            text-shadow: 0 0 10px rgba(240,165,0,0.5);
-            width: 100%;
-            text-align: center;
-            font-weight: bold;
+            font-size: 1.8rem; margin-bottom: 15px; color: #f0a500; text-shadow: 0 0 10px rgba(240,165,0,0.5);
+            width: 100%; text-align: center; font-weight: bold;
         }
 
-        /* 룰렛 휠 영역 */
-        .roulette-wheel-area {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 16px;
-            flex: 1;
-        }
-
-        .roulette-wheel-wrapper {
-            position: relative;
-            width: 400px;
-            height: 400px;
-        }
-
-        canvas#roulette-wheel {
-            border-radius: 50%;
-            box-shadow: 0 0 30px rgba(0,0,0,0.6);
-            width: 100%;
-            height: 100%;
-        }
-
+        .roulette-wheel-area { display: flex; flex-direction: column; align-items: center; gap: 12px; flex: 1; }
+        .roulette-wheel-wrapper { position: relative; width: 400px; height: 400px; }
+        canvas#roulette-wheel { border-radius: 50%; box-shadow: 0 0 30px rgba(0,0,0,0.6); width: 100%; height: 100%; }
         .roulette-pointer {
-            position: absolute;
-            right: -18px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 0;
-            height: 0;
-            border-top: 18px solid transparent;
-            border-bottom: 18px solid transparent;
-            border-right: 36px solid #f0a500;
-            filter: drop-shadow(0 0 6px #f0a500);
-            z-index: 10;
+            position: absolute; right: -18px; top: 50%; transform: translateY(-50%); width: 0; height: 0;
+            border-top: 18px solid transparent; border-bottom: 18px solid transparent; border-right: 36px solid #f0a500;
+            filter: drop-shadow(0 0 6px #f0a500); z-index: 10;
         }
 
         #roulette-spinBtn {
-            padding: 12px 35px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            border: none;
-            border-radius: 50px;
-            background: linear-gradient(135deg, #f0a500, #e05c00);
-            color: white;
-            cursor: pointer;
-            transition: transform 0.1s, box-shadow 0.1s;
-            box-shadow: 0 4px 15px rgba(240,165,0,0.4);
-            margin-top: 5px;
+            padding: 12px 35px; font-size: 1.1rem; font-weight: bold; border: none; border-radius: 50px;
+            background: linear-gradient(135deg, #f0a500, #e05c00); color: white; cursor: pointer;
+            transition: transform 0.1s, box-shadow 0.1s; box-shadow: 0 4px 15px rgba(240,165,0,0.4); margin-top: 5px;
         }
-        #roulette-spinBtn:hover:not(:disabled) {
-            transform: scale(1.05);
-            box-shadow: 0 6px 20px rgba(240,165,0,0.6);
-        }
+        #roulette-spinBtn:hover:not(:disabled) { transform: scale(1.05); box-shadow: 0 6px 20px rgba(240,165,0,0.6); }
         #roulette-spinBtn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* 다중 뽑기 영역 스타일 */
+        .multi-pick-container {
+            display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.2); 
+            padding: 10px 20px; border-radius: 50px; margin-top: 5px; border: 1px solid #333;
+        }
+        .multi-pick-input {
+            width: 60px; padding: 8px; border-radius: 8px; border: 1px solid #555; background: #0f3460;
+            color: white; text-align: center; font-size: 1.1rem; font-weight: bold; outline: none;
+        }
+        .multi-pick-input:focus { border-color: #3498db; }
+        .multi-pick-btn {
+            padding: 10px 20px; font-size: 1rem; font-weight: bold; border: none; border-radius: 50px;
+            background: linear-gradient(135deg, #3498db, #2980b9); color: white; cursor: pointer;
+            transition: transform 0.1s, box-shadow 0.1s; box-shadow: 0 4px 15px rgba(52, 152, 219, 0.4);
+        }
+        .multi-pick-btn:hover:not(:disabled) { transform: scale(1.05); box-shadow: 0 6px 20px rgba(52, 152, 219, 0.6); }
+        .multi-pick-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
         #roulette-countBadge { font-size: 0.95rem; color: #aaa; margin-top: 5px; }
         #roulette-countBadge span { color: #f0a500; font-weight: bold; font-size: 1.1rem; }
         #roulette-emptyMsg { display: none; color: #f0a500; font-size: 1rem; text-align: center; margin-top: 5px;}
 
-        /* 룰렛 패널 영역 */
         .roulette-panel {
-            background: #16213e;
-            border-radius: 16px;
-            padding: 20px;
-            width: 250px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
+            background: #16213e; border-radius: 16px; padding: 20px; width: 260px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4); display: flex; flex-direction: column; gap: 12px;
             font-family: 'Segoe UI', sans-serif;
         }
-
         .roulette-panel h2 { font-size: 1rem; color: #f0a500; font-weight: bold; margin: 0; }
-
         textarea#roulette-names {
-            width: 100%;
-            height: 180px;
-            background: #0f3460;
-            border: 1px solid #444;
-            border-radius: 8px;
-            color: #eee;
-            padding: 10px;
-            font-size: 0.9rem;
-            resize: vertical;
-            outline: none;
+            width: 100%; height: 220px; background: #0f3460; border: 1px solid #444; border-radius: 8px;
+            color: #eee; padding: 10px; font-size: 0.9rem; resize: vertical; outline: none; line-height: 1.5;
         }
         textarea#roulette-names:focus { border-color: #f0a500; }
 
-        .roulette-toggle-row {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.85rem;
-            color: #ccc;
-        }
-        .roulette-toggle-row input[type="checkbox"] {
-            width: 16px; height: 16px;
-            accent-color: #f0a500;
-            cursor: pointer;
-        }
+        .roulette-toggle-row { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: #ccc; }
+        .roulette-toggle-row input[type="checkbox"] { width: 16px; height: 16px; accent-color: #f0a500; cursor: pointer; }
 
         .roulette-btn-row { display: flex; gap: 8px; }
-        .roulette-panel button {
-            flex: 1;
-            padding: 8px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.85rem;
-            font-weight: bold;
-            transition: opacity 0.2s;
-        }
+        .roulette-panel button { flex: 1; padding: 8px; border: none; border-radius: 8px; cursor: pointer; font-size: 0.85rem; font-weight: bold; transition: opacity 0.2s; }
         .roulette-btn-apply  { background: #f0a500; color: #111; }
-        .roulette-btn-clear  { background: #555;    color: #eee; }
+        .roulette-btn-clear  { background: #555; color: #eee; }
         .roulette-panel button:hover { opacity: 0.85; }
 
-        #roulette-resultList {
-            max-height: 100px;
-            overflow-y: auto;
-            font-size: 0.85rem;
-            padding-left: 0;
-            margin: 0;
-        }
-        #roulette-resultList li {
-            padding: 4px 6px;
-            border-bottom: 1px solid #2a2a4a;
-            list-style: none;
-            color: #eee;
-        }
+        #roulette-resultList { max-height: 120px; overflow-y: auto; font-size: 0.85rem; padding-left: 0; margin: 0; }
+        #roulette-resultList li { padding: 4px 6px; border-bottom: 1px solid #2a2a4a; list-style: none; color: #eee; }
 
         /* 룰렛 모달 */
-        #roulette-modal {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.7);
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-        }
+        #roulette-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); justify-content: center; align-items: center; z-index: 9999; }
         #roulette-modal.show { display: flex; }
-
         .roulette-modal-box {
-            background: #1a1a2e;
-            border: 2px solid #f0a500;
-            border-radius: 20px;
-            padding: 40px 50px;
-            text-align: center;
-            animation: popIn 0.4s cubic-bezier(0.175,0.885,0.32,1.275);
-            box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+            background: #1a1a2e; border: 2px solid #f0a500; border-radius: 20px; padding: 40px 50px;
+            text-align: center; animation: popIn 0.4s cubic-bezier(0.175,0.885,0.32,1.275); box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+            max-width: 80vw; max-height: 80vh; overflow-y: auto;
         }
-        @keyframes popIn {
-            from { transform: scale(0.5); opacity: 0; }
-            to   { transform: scale(1);   opacity: 1; }
-        }
+        @keyframes popIn { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
         .roulette-modal-box h2 { font-size: 1.2rem; color: #aaa; margin-bottom: 10px; }
-        .roulette-modal-box p  { font-size: 2.2rem; font-weight: bold; color: #f0a500; margin-bottom: 24px; }
-
-        .roulette-modal-btn-row { display: flex; gap: 12px; justify-content: center; }
-        .roulette-modal-box button {
-            padding: 12px 30px;
-            border: none;
-            border-radius: 50px;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
+        .roulette-modal-box p { font-size: 2.2rem; font-weight: bold; color: #f0a500; margin-bottom: 24px; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+        
+        .winner-tag {
+            background: linear-gradient(135deg, #f0a500, #e67e22); color: #111; padding: 5px 20px;
+            border-radius: 50px; font-size: 1.8rem; font-weight: 900; box-shadow: 0 4px 10px rgba(240,165,0,0.3);
+            animation: tagPop 0.3s ease-out backwards;
         }
+        
+        /* 인형뽑기 긴장감 모드용 가짜 태그 스타일 */
+        .dummy-tag {
+            background: #333; color: #888; padding: 5px 20px; border-radius: 50px; 
+            font-size: 1.8rem; font-weight: 900; box-shadow: none; transform: scale(0.9);
+        }
+
+        @keyframes tagPop { 0% { transform: scale(0); } 80% { transform: scale(1.1); } 100% { transform: scale(1); } }
+
+        .roulette-modal-btn-row { display: flex; gap: 12px; justify-content: center; margin-top: 10px; }
+        .roulette-modal-box button { padding: 12px 30px; border: none; border-radius: 50px; font-size: 1rem; font-weight: bold; cursor: pointer; }
         .roulette-btn-keep   { background: #555; color: #eee; }
         .roulette-btn-remove { background: #f0a500; color: #111; }
         .roulette-modal-box button:hover { opacity: 0.85; }
@@ -552,271 +261,82 @@
 
         /* --- E-book Popup --- */
         .ebook-popup {
-            display: none;
-            position: absolute;
-            bottom: 90px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: rgba(255, 255, 255, 0.97);
-            border-radius: 1rem;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.25);
-            padding: 20px 30px;
-            z-index: 1001;
-            text-align: center;
-            animation: popupFadeIn 0.2s ease;
+            display: none; position: absolute; bottom: 90px; left: 50%; transform: translateX(-50%);
+            background-color: rgba(255, 255, 255, 0.97); border-radius: 1rem; box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+            padding: 20px 30px; z-index: 1001; text-align: center; animation: popupFadeIn 0.2s ease;
         }
         .ebook-popup.show { display: block; }
-        @keyframes popupFadeIn {
-            from { opacity: 0; transform: translateX(-50%) translateY(10px); }
-            to { opacity: 1; transform: translateX(-50%) translateY(0); }
-        }
-        .ebook-popup-title {
-            font-weight: 900;
-            font-size: 1rem;
-            color: #374151;
-            margin-bottom: 15px;
-        }
-        .ebook-grade-btns {
-            display: flex;
-            gap: 15px;
-        }
+        @keyframes popupFadeIn { from { opacity: 0; transform: translateX(-50%) translateY(10px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
+        .ebook-popup-title { font-weight: 900; font-size: 1rem; color: #374151; margin-bottom: 15px; }
+        .ebook-grade-btns { display: flex; gap: 15px; }
         .ebook-grade-btn {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            width: 100px;
-            height: 100px;
-            border-radius: 1rem;
-            border: 2px solid #E5E7EB;
-            background: white;
-            cursor: pointer;
-            transition: all 0.2s;
-            color: #4B5563;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            width: 100px; height: 100px; border-radius: 1rem; border: 2px solid #E5E7EB; background: white;
+            cursor: pointer; transition: all 0.2s; color: #4B5563;
         }
-        .ebook-grade-btn:hover {
-            border-color: #6366F1;
-            color: #4F46E5;
-            background-color: #EEF2FF;
-            transform: translateY(-3px);
-            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
-        }
-        .ebook-grade-btn i {
-            font-size: 2rem;
-            margin-bottom: 8px;
-        }
-        .ebook-grade-btn span {
-            font-size: 0.9rem;
-            font-weight: 700;
-        }
+        .ebook-grade-btn:hover { border-color: #6366F1; color: #4F46E5; background-color: #EEF2FF; transform: translateY(-3px); box-shadow: 0 6px 15px rgba(0,0,0,0.1); }
+        .ebook-grade-btn i { font-size: 2rem; margin-bottom: 8px; }
+        .ebook-grade-btn span { font-size: 0.9rem; font-weight: 700; }
 
         /* --- Bottom Toolbar --- */
-        .toolbar-container {
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 15px;
-            z-index: 1000;
-        }
-
-        .toolbar-group {
-            background-color: rgba(255, 255, 255, 0.95);
-            padding: 10px;
-            border-radius: 1rem;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
-            display: flex;
-            gap: 10px;
-        }
-
+        .toolbar-container { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; gap: 15px; z-index: 1000; }
+        .toolbar-group { background-color: rgba(255, 255, 255, 0.95); padding: 10px; border-radius: 1rem; box-shadow: 0 5px 20px rgba(0,0,0,0.15); display: flex; gap: 10px; }
         .tool-btn {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            width: 65px;
-            height: 65px;
-            border-radius: 0.5rem;
-            border: none;
-            background-color: transparent;
-            cursor: pointer;
-            color: #4B5563;
-            transition: all 0.2s;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            width: 65px; height: 65px; border-radius: 0.5rem; border: none; background-color: transparent;
+            cursor: pointer; color: #4B5563; transition: all 0.2s;
         }
-
-        .tool-btn:hover {
-            background-color: #F3F4F6;
-            color: #111827;
-            transform: translateY(-2px);
-        }
-
-        .tool-btn.active {
-            color: #4F46E5;
-            background-color: #EEF2FF;
-        }
-
-        .tool-btn i {
-            font-size: 1.5rem;
-            margin-bottom: 5px;
-        }
-
-        .tool-btn span {
-            font-size: 0.75rem;
-            font-weight: 700;
-        }
+        .tool-btn:hover { background-color: #F3F4F6; color: #111827; transform: translateY(-2px); }
+        .tool-btn.active { color: #4F46E5; background-color: #EEF2FF; }
+        .tool-btn i { font-size: 1.5rem; margin-bottom: 5px; }
+        .tool-btn span { font-size: 0.75rem; font-weight: 700; }
 
         /* --- Background Selector --- */
-        .bg-selector-container {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            z-index: 1000;
-        }
-
+        .bg-selector-container { position: absolute; top: 20px; right: 20px; z-index: 1000; }
         .bg-btn {
-            background-color: rgba(255, 255, 255, 0.9);
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 1.5rem;
-            color: #4B5563;
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            transition: all 0.2s;
-            border: none;
+            background-color: rgba(255, 255, 255, 0.9); width: 50px; height: 50px; border-radius: 50%;
+            display: flex; justify-content: center; align-items: center; font-size: 1.5rem; color: #4B5563;
+            cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: all 0.2s; border: none;
         }
-        .bg-btn:hover {
-            background-color: white;
-            color: #111827;
-            transform: scale(1.05);
-        }
-
+        .bg-btn:hover { background-color: white; color: #111827; transform: scale(1.05); }
         .bg-menu {
-            display: none;
-            position: absolute;
-            top: 60px;
-            right: 0;
-            background-color: white;
-            border-radius: 1rem;
-            padding: 15px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-            width: 320px;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            max-height: 400px;
-            overflow-y: auto;
+            display: none; position: absolute; top: 60px; right: 0; background-color: white; border-radius: 1rem;
+            padding: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); width: 320px; grid-template-columns: repeat(3, 1fr);
+            gap: 10px; max-height: 400px; overflow-y: auto;
         }
-        .bg-menu.show {
-            display: grid;
-        }
-
-        .bg-thumb {
-            width: 100%;
-            height: 60px;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            border: 2px solid transparent;
-            transition: border-color 0.2s;
-            background-size: cover;
-            background-position: center;
-        }
-        .bg-thumb:hover {
-            border-color: #4F46E5;
-        }
-
-        /* 업로드 버튼 전용 스타일 */
-        .upload-thumb {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: #F3F4F6;
-            border: 2px dashed #D1D5DB;
-            color: #6B7280;
-            font-size: 1.5rem;
-        }
-        .upload-thumb:hover {
-            border-color: #4F46E5;
-            color: #4F46E5;
-            background-color: #EEF2FF;
-        }
-
-        /* Bell animation */
-        @keyframes shake {
-            0% { transform: rotate(0deg); }
-            25% { transform: rotate(15deg); }
-            50% { transform: rotate(0deg); }
-            75% { transform: rotate(-15deg); }
-            100% { transform: rotate(0deg); }
-        }
-        .ringing {
-            animation: shake 0.3s ease-in-out infinite;
-            color: #F59E0B !important;
-        }
+        .bg-menu.show { display: grid; }
+        .bg-thumb { width: 100%; height: 60px; border-radius: 0.5rem; cursor: pointer; border: 2px solid transparent; transition: border-color 0.2s; background-size: cover; background-position: center; }
+        .bg-thumb:hover { border-color: #4F46E5; }
+        .upload-thumb { display: flex; justify-content: center; align-items: center; background-color: #F3F4F6; border: 2px dashed #D1D5DB; color: #6B7280; font-size: 1.5rem; }
+        .upload-thumb:hover { border-color: #4F46E5; color: #4F46E5; background-color: #EEF2FF; }
 
         /* --- Dock Toggle --- */
         .dock-toggle-btn {
-            position: fixed;
-            bottom: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 1001;
-            background-color: rgba(255, 255, 255, 0.85);
-            border: none;
-            border-radius: 50%;
-            width: 36px;
-            height: 36px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
-            transition: all 0.3s ease;
-            color: #6B7280;
-            font-size: 0.9rem;
+            position: fixed; bottom: 10px; left: 50%; transform: translateX(-50%); z-index: 1001;
+            background-color: rgba(255, 255, 255, 0.85); border: none; border-radius: 50%;
+            width: 36px; height: 36px; display: flex; justify-content: center; align-items: center;
+            cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,0.15); transition: all 0.3s ease; color: #6B7280; font-size: 0.9rem;
         }
-        .dock-toggle-btn:hover {
-            background-color: white;
-            color: #4F46E5;
-            transform: translateX(-50%) scale(1.1);
-        }
-
-        .toolbar-container {
-            transition: transform 0.4s ease, opacity 0.3s ease;
-        }
-        .toolbar-container.hidden {
-            transform: translateX(-50%) translateY(120%);
-            opacity: 0;
-            pointer-events: none;
-        }
+        .dock-toggle-btn:hover { background-color: white; color: #4F46E5; transform: translateX(-50%) scale(1.1); }
+        .toolbar-container { transition: transform 0.4s ease, opacity 0.3s ease; }
+        .toolbar-container.hidden { transform: translateX(-50%) translateY(120%); opacity: 0; pointer-events: none; }
 
     </style>
 </head>
 <body id="main-body">
 
-    <!-- Audio for Bell -->
     <audio id="bell-sound" preload="auto">
+        <!-- 기존 탁상벨 음원 폴백용. 룰렛 사운드는 코드 내 자체 생성됨 -->
         <source src="my-bell.mp3" type="audio/mpeg">
     </audio>
 
-    <!-- Background Upload Input (Hidden) -->
     <input type="file" id="bg-upload-input" accept="image/*" style="display: none;">
 
-    <!-- Background Selector -->
     <div class="bg-selector-container">
-        <button class="bg-btn" onclick="toggleBgMenu()" title="배경화면 변경">
-            <i class="fas fa-image"></i>
-        </button>
-        <div id="bg-menu" class="bg-menu">
-            <!-- Background thumbnails will be generated here by JS -->
-        </div>
+        <button class="bg-btn" onclick="toggleBgMenu()" title="배경화면 변경"><i class="fas fa-image"></i></button>
+        <div id="bg-menu" class="bg-menu"></div>
     </div>
 
-    <!-- Widgets -->
-    
     <!-- 1. Clock Widget -->
     <div id="widget-clock" class="widget" style="top: 50px; left: 50px; display: none;">
         <div class="widget-header"><i class="fas fa-grip-lines"></i></div>
@@ -835,64 +355,50 @@
         <div class="widget-header"><i class="fas fa-grip-lines"></i></div>
         <div class="widget-content">
             <i class="fas fa-times close-btn" onclick="toggleWidget('widget-timer', 'btn-timer')"></i>
-            
             <div class="time-adjust-row">
                 <button class="time-adjust" onclick="adjustTime(60)"><i class="fas fa-chevron-up"></i></button>
                 <button class="time-adjust" onclick="adjustTime(1)"><i class="fas fa-chevron-up"></i></button>
             </div>
-            
             <input type="text" id="timer-display" class="timer-display" value="10:00" title="클릭하여 시간 입력 (예: 30, 1:30)">
-            
             <div class="time-adjust-row mb-6">
                 <button class="time-adjust" onclick="adjustTime(-60)"><i class="fas fa-chevron-down"></i></button>
                 <button class="time-adjust" onclick="adjustTime(-1)"><i class="fas fa-chevron-down"></i></button>
             </div>
-
             <div class="flex gap-6">
-                <button id="timer-toggle-btn" class="timer-btn" onclick="toggleTimer()">
-                    <i class="fas fa-play" style="margin-left: 5px;"></i>
-                </button>
-                <button class="timer-btn reset" onclick="resetTimer()">
-                    <i class="fas fa-redo"></i>
-                </button>
+                <button id="timer-toggle-btn" class="timer-btn" onclick="toggleTimer()"><i class="fas fa-play" style="margin-left: 5px;"></i></button>
+                <button class="timer-btn reset" onclick="resetTimer()"><i class="fas fa-redo"></i></button>
             </div>
         </div>
     </div>
 
-    <!-- 4. English Note Widget -->
+    <!-- 3. English Note Widget -->
     <div id="widget-note" class="widget" style="top: 350px; left: 50px; display: none;">
         <div class="widget-header"><i class="fas fa-grip-lines"></i></div>
         <div class="widget-content">
             <i class="fas fa-times close-btn" onclick="toggleWidget('widget-note', 'btn-note')"></i>
-            
             <div class="note-toolbar">
                 <button class="note-btn" onclick="changeNoteFontSize(10)" title="글자 크게"><i class="fas fa-search-plus"></i></button>
                 <button class="note-btn" onclick="changeNoteFontSize(-10)" title="글자 작게"><i class="fas fa-search-minus"></i></button>
-                
                 <div class="color-picker-group">
-                    <button class="color-btn" style="background-color: #1f2937;" onclick="changeTextColor('#1f2937')" title="검정색"></button>
-                    <button class="color-btn" style="background-color: #ef4444;" onclick="changeTextColor('#ef4444')" title="빨간색"></button>
-                    <button class="color-btn" style="background-color: #3b82f6;" onclick="changeTextColor('#3b82f6')" title="파란색"></button>
+                    <button class="color-btn" style="background-color: #1f2937;" onclick="changeTextColor('#1f2937')"></button>
+                    <button class="color-btn" style="background-color: #ef4444;" onclick="changeTextColor('#ef4444')"></button>
+                    <button class="color-btn" style="background-color: #3b82f6;" onclick="changeTextColor('#3b82f6')"></button>
                 </div>
-                
-                <select class="note-btn ml-3" style="font-weight: 500;" onchange="changeKoreanFont(this.value)" title="한글 글씨체 변경 (영어는 4선지 고정)">
+                <select class="note-btn ml-3" style="font-weight: 500;" onchange="changeKoreanFont(this.value)">
                     <option value="Noto Sans KR">한글: 기본 고딕체</option>
                     <option value="Gowun Batang">한글: 단정한 바탕체</option>
                     <option value="Nanum Pen Script">한글: 펜글씨체</option>
                     <option value="Hi Melody">한글: 동글 귀여운체</option>
                 </select>
-
                 <button class="note-btn ml-3" onclick="clearNote()" title="전체 지우기"><i class="fas fa-eraser"></i></button>
-                <span class="note-info"><i class="fas fa-info-circle"></i> </span>
             </div>
-
             <div class="note-input-container">
                 <div id="english-note-input" contenteditable="true" spellcheck="false" placeholder=" Type your English sentence here..."></div>
             </div>
         </div>
     </div>
 
-    <!-- 5. Roulette Widget (신규 통합) -->
+    <!-- 4. Roulette Widget (긴장감 스캐닝 기능 포함) -->
     <div id="widget-roulette" class="widget" style="top: 150px; left: 150px; display: none;">
         <div class="widget-header"><i class="fas fa-grip-lines"></i></div>
         <i class="fas fa-times close-btn" onclick="toggleWidget('widget-roulette', 'btn-roulette')"></i>
@@ -900,18 +406,24 @@
         <div class="roulette-title">🎡 랜덤 룰렛</div>
         
         <div class="widget-content" style="padding-top: 0;">
-            <!-- 룰렛 영역 -->
             <div class="roulette-wheel-area">
                 <div class="roulette-wheel-wrapper">
                     <canvas id="roulette-wheel" width="400" height="400"></canvas>
                     <div class="roulette-pointer"></div>
                 </div>
                 <p id="roulette-countBadge">남은 항목: <span id="roulette-countNum">0</span>개</p>
-                <button id="roulette-spinBtn" onclick="RouletteApp.spin()">돌리기 🎲</button>
+                <button id="roulette-spinBtn" onclick="RouletteApp.spin()">한 명 돌리기 🎲</button>
+                
+                <!-- 다중 뽑기 패널 -->
+                <div class="multi-pick-container">
+                    <input type="number" id="multi-pick-count" class="multi-pick-input" min="2" value="4" title="몇 명을 뽑을까요?">
+                    <span style="font-size:1.1rem; color:#aaa; font-weight:bold;">명</span>
+                    <button class="multi-pick-btn" onclick="RouletteApp.pickMultiple()">한 번에 뽑기 👥</button>
+                </div>
+
                 <p id="roulette-emptyMsg">🎉 모든 항목이 선택됐습니다!</p>
             </div>
 
-            <!-- 패널 영역 -->
             <div class="roulette-panel">
                 <h2>📋 항목 입력 (한 줄에 하나)</h2>
                 <textarea id="roulette-names">박시우
@@ -922,24 +434,21 @@
 김소리
 심예성
 서주환</textarea>
-
                 <label class="roulette-toggle-row">
                     <input type="checkbox" id="roulette-removeToggle" checked />
                     당첨 후 명단 제외
                 </label>
-
                 <div class="roulette-btn-row">
                     <button class="roulette-btn-apply" onclick="RouletteApp.applyNames()">적용</button>
                     <button class="roulette-btn-clear" onclick="RouletteApp.clearAll()">초기화</button>
                 </div>
-
                 <h2>🏆 결과 기록</h2>
                 <ul id="roulette-resultList"></ul>
             </div>
         </div>
     </div>
 
-    <!-- 결과 모달 (룰렛 전용) -->
+    <!-- 결과 모달 -->
     <div id="roulette-modal">
         <div class="roulette-modal-box">
             <h2>🎉 당첨!</h2>
@@ -951,495 +460,201 @@
         </div>
     </div>
 
-
-    <!-- 6. E-book Grade Popup -->
+    <!-- 5. E-book Popup -->
     <div id="ebook-popup" class="ebook-popup">
         <div class="ebook-popup-title">📚 학년을 선택하세요</div>
         <div class="ebook-grade-btns">
-            <button class="ebook-grade-btn" onclick="openEbook(3)">
-                <i class="fas fa-book-reader" style="color: #6366F1;"></i>
-                <span>3학년</span>
-            </button>
-            <button class="ebook-grade-btn" onclick="openEbook(4)">
-                <i class="fas fa-book-reader" style="color: #F59E0B;"></i>
-                <span>4학년</span>
-            </button>
+            <button class="ebook-grade-btn" onclick="openEbook(3)"><i class="fas fa-book-reader" style="color: #6366F1;"></i><span>3학년</span></button>
+            <button class="ebook-grade-btn" onclick="openEbook(4)"><i class="fas fa-book-reader" style="color: #F59E0B;"></i><span>4학년</span></button>
         </div>
     </div>
 
     <!-- Dock Toggle Button -->
-    <button id="dock-toggle" class="dock-toggle-btn" onclick="toggleDock()" title="도구 모음 숨기기/보이기">
-        <i class="fas fa-chevron-down"></i>
-    </button>
+    <button id="dock-toggle" class="dock-toggle-btn" onclick="toggleDock()" title="도구 모음 숨기기/보이기"><i class="fas fa-chevron-down"></i></button>
 
     <!-- Bottom Toolbar -->
     <div class="toolbar-container" id="toolbar-container">
-        <!-- Widget Toggles -->
         <div class="toolbar-group">
-            <button id="btn-clock" class="tool-btn" onclick="toggleWidget('widget-clock', 'btn-clock')">
-                <i class="far fa-clock"></i>
-                <span>시계</span>
-            </button>
-            <button id="btn-timer" class="tool-btn" onclick="toggleWidget('widget-timer', 'btn-timer')">
-                <i class="fas fa-hourglass-half"></i>
-                <span>타이머</span>
-            </button>
-            <button id="btn-note" class="tool-btn" onclick="toggleWidget('widget-note', 'btn-note')">
-                <i class="fas fa-book-open"></i>
-                <span>영어노트</span>
-            </button>
-            
-            <!-- 룰렛 버튼 추가 -->
-            <button id="btn-roulette" class="tool-btn" onclick="toggleWidget('widget-roulette', 'btn-roulette')">
-                <i class="fas fa-dharmachakra"></i>
-                <span>룰렛</span>
-            </button>
-
-            <button id="btn-ebook" class="tool-btn" onclick="toggleEbookPopup()">
-                <i class="fas fa-tablet-alt"></i>
-                <span>E-book</span>
-            </button>
-            <button id="btn-seat" class="tool-btn" onclick="window.open('https://hachori.github.io/seat/', '_blank')">
-                <i class="fas fa-chair"></i>
-                <span>자리배치</span>
-            </button>
+            <button id="btn-clock" class="tool-btn" onclick="toggleWidget('widget-clock', 'btn-clock')"><i class="far fa-clock"></i><span>시계</span></button>
+            <button id="btn-timer" class="tool-btn" onclick="toggleWidget('widget-timer', 'btn-timer')"><i class="fas fa-hourglass-half"></i><span>타이머</span></button>
+            <button id="btn-note" class="tool-btn" onclick="toggleWidget('widget-note', 'btn-note')"><i class="fas fa-book-open"></i><span>영어노트</span></button>
+            <button id="btn-roulette" class="tool-btn" onclick="toggleWidget('widget-roulette', 'btn-roulette')"><i class="fas fa-dharmachakra"></i><span>룰렛</span></button>
+            <button id="btn-ebook" class="tool-btn" onclick="toggleEbookPopup()"><i class="fas fa-tablet-alt"></i><span>E-book</span></button>
+            <button id="btn-seat" class="tool-btn" onclick="window.open('https://hachori.github.io/seat/', '_blank')"><i class="fas fa-chair"></i><span>자리배치</span></button>
         </div>
     </div>
 
     <script>
         // ==========================================
-        // 0. Background Management
+        // Background & Draggable & UI Logics
         // ==========================================
         const backgrounds = [
             'https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80',
             'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80',
             'https://images.unsplash.com/photo-1518173946687-a4c8892bbd9f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80',
             'https://images.unsplash.com/photo-1472214103451-9374bd1c798e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80',
-            'https://images.unsplash.com/photo-1499002236252-7001a189f7fb?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80',
-            'https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80',
-            'https://images.unsplash.com/photo-1513694203232-719a280e022f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80',
-            'https://images.unsplash.com/photo-1501862700950-18382cd41497?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80',
-            'https://images.unsplash.com/photo-1557682224-5b8590cd9ec5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80',
-            'https://images.unsplash.com/photo-1604147706283-d7119b5b822c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80'
+            'https://images.unsplash.com/photo-1499002236252-7001a189f7fb?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80'
         ];
 
         function initBackgrounds() {
             const body = document.getElementById('main-body');
             const menu = document.getElementById('bg-menu');
-            
             body.style.backgroundImage = `url('${backgrounds[0]}')`;
-
             const uploadThumb = document.createElement('div');
-            uploadThumb.className = 'bg-thumb upload-thumb';
-            uploadThumb.innerHTML = '<i class="fas fa-plus"></i>';
-            uploadThumb.title = '내 PC에서 사진 업로드';
-            uploadThumb.onclick = () => document.getElementById('bg-upload-input').click();
-            menu.appendChild(uploadThumb);
-
+            uploadThumb.className = 'bg-thumb upload-thumb'; uploadThumb.innerHTML = '<i class="fas fa-plus"></i>';
+            uploadThumb.onclick = () => document.getElementById('bg-upload-input').click(); menu.appendChild(uploadThumb);
             backgrounds.forEach(bgUrl => {
-                const thumb = document.createElement('div');
-                thumb.className = 'bg-thumb';
-                thumb.style.backgroundImage = `url('${bgUrl}')`;
-                thumb.onclick = () => {
-                    body.style.backgroundImage = `url('${bgUrl}')`;
-                    toggleBgMenu(); 
-                };
-                menu.appendChild(thumb);
+                const thumb = document.createElement('div'); thumb.className = 'bg-thumb'; thumb.style.backgroundImage = `url('${bgUrl}')`;
+                thumb.onclick = () => { body.style.backgroundImage = `url('${bgUrl}')`; toggleBgMenu(); }; menu.appendChild(thumb);
             });
         }
 
         document.getElementById('bg-upload-input').addEventListener('change', function(e) {
             const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    const imgUrl = event.target.result;
-                    const body = document.getElementById('main-body');
-                    const menu = document.getElementById('bg-menu');
-                    
-                    body.style.backgroundImage = `url('${imgUrl}')`;
-                    
-                    const customThumb = document.createElement('div');
-                    customThumb.className = 'bg-thumb';
-                    customThumb.style.backgroundImage = `url('${imgUrl}')`;
-                    customThumb.onclick = () => {
-                        body.style.backgroundImage = `url('${imgUrl}')`;
-                        toggleBgMenu();
-                    };
-                    menu.insertBefore(customThumb, menu.children[1]);
-
-                    toggleBgMenu();
-                };
-                reader.readAsDataURL(file);
-            }
+            if (file) { const reader = new FileReader(); reader.onload = function(event) { document.getElementById('main-body').style.backgroundImage = `url('${event.target.result}')`; toggleBgMenu(); }; reader.readAsDataURL(file); }
         });
 
-        function toggleBgMenu() {
-            document.getElementById('bg-menu').classList.toggle('show');
-        }
+        function toggleBgMenu() { document.getElementById('bg-menu').classList.toggle('show'); }
+        window.onclick = function(event) { if (!event.target.closest('.bg-selector-container')) { const menu = document.getElementById('bg-menu'); if (menu.classList.contains('show')) menu.classList.remove('show'); } }
 
-        window.onclick = function(event) {
-            if (!event.target.closest('.bg-selector-container')) {
-                const menu = document.getElementById('bg-menu');
-                if (menu.classList.contains('show')) {
-                    menu.classList.remove('show');
-                }
-            }
-        }
-
-        // ==========================================
-        // 1. Draggable Elements Logic
-        // ==========================================
         function makeDraggable(element) {
-            let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-            const header = element.querySelector('.widget-header');
-            
-            if (header) {
-                header.onmousedown = dragMouseDown;
-            }
-
-            function dragMouseDown(e) {
-                e.preventDefault();
-                pos3 = e.clientX;
-                pos4 = e.clientY;
-                document.onmouseup = closeDragElement;
-                document.onmousemove = elementDrag;
-                
-                document.querySelectorAll('.widget').forEach(w => w.style.zIndex = 10);
-                element.style.zIndex = 100;
-            }
-
-            function elementDrag(e) {
-                e.preventDefault();
-                pos1 = pos3 - e.clientX;
-                pos2 = pos4 - e.clientY;
-                pos3 = e.clientX;
-                pos4 = e.clientY;
-                element.style.top = (element.offsetTop - pos2) + "px";
-                element.style.left = (element.offsetLeft - pos1) + "px";
-            }
-
-            function closeDragElement() {
-                document.onmouseup = null;
-                document.onmousemove = null;
-            }
+            let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0; const header = element.querySelector('.widget-header');
+            if (header) header.onmousedown = dragMouseDown;
+            function dragMouseDown(e) { e.preventDefault(); pos3 = e.clientX; pos4 = e.clientY; document.onmouseup = closeDragElement; document.onmousemove = elementDrag; document.querySelectorAll('.widget').forEach(w => w.style.zIndex = 10); element.style.zIndex = 100; }
+            function elementDrag(e) { e.preventDefault(); pos1 = pos3 - e.clientX; pos2 = pos4 - e.clientY; pos3 = e.clientX; pos4 = e.clientY; element.style.top = (element.offsetTop - pos2) + "px"; element.style.left = (element.offsetLeft - pos1) + "px"; }
+            function closeDragElement() { document.onmouseup = null; document.onmousemove = null; }
         }
 
-        // ==========================================
-        // 2. Toolbar & Widget Toggle Logic
-        // ==========================================
         function toggleWidget(widgetId, btnId) {
-            const widget = document.getElementById(widgetId);
-            const btn = document.getElementById(btnId);
-            
-            if (widget.style.display === "none" || widget.style.display === "") {
-                widget.style.display = "flex";
-                if(btn) btn.classList.add('active');
-                
-                document.querySelectorAll('.widget').forEach(w => w.style.zIndex = 10);
-                widget.style.zIndex = 100;
-            } else {
-                widget.style.display = "none";
-                if(btn) btn.classList.remove('active');
-            }
+            const widget = document.getElementById(widgetId); const btn = document.getElementById(btnId);
+            if (widget.style.display === "none" || widget.style.display === "") { widget.style.display = "flex"; if(btn) btn.classList.add('active'); document.querySelectorAll('.widget').forEach(w => w.style.zIndex = 10); widget.style.zIndex = 100; } 
+            else { widget.style.display = "none"; if(btn) btn.classList.remove('active'); }
         }
 
-        // ==========================================
-        // 3. Clock Logic
-        // ==========================================
         function updateClock() {
-            const now = new Date();
-            let hours = now.getHours();
-            let minutes = now.getMinutes();
-            const ampm = hours >= 12 ? 'PM' : 'AM';
-            
-            hours = hours % 12;
-            hours = hours ? hours : 12; 
-            minutes = minutes < 10 ? '0' + minutes : minutes;
-            
-            document.getElementById('clock-time').textContent = hours + ':' + minutes;
-            document.getElementById('clock-ampm').textContent = ampm;
-
+            const now = new Date(); let hours = now.getHours(), minutes = now.getMinutes(); const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12; hours = hours ? hours : 12; minutes = minutes < 10 ? '0' + minutes : minutes;
+            document.getElementById('clock-time').textContent = hours + ':' + minutes; document.getElementById('clock-ampm').textContent = ampm;
             const days = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
-            const dateString = `${now.getFullYear()}년 ${now.getMonth() + 1}월 ${now.getDate()}일 ${days[now.getDay()]}`;
-            document.getElementById('clock-date').textContent = dateString;
+            document.getElementById('clock-date').textContent = `${now.getFullYear()}년 ${now.getMonth() + 1}월 ${now.getDate()}일 ${days[now.getDay()]}`;
         }
 
-        // ==========================================
-        // 4. Timer Logic
-        // ==========================================
-        let timerDuration = 600; 
-        let timeRemaining = 600;
-        let timerInterval = null;
-        let isTimerRunning = false;
-
-        function updateTimerDisplay() {
-            if (timeRemaining < 0) timeRemaining = 0;
-            const m = Math.floor(timeRemaining / 60);
-            const s = timeRemaining % 60;
-            document.getElementById('timer-display').value = 
-                `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-        }
-
-        function adjustTime(seconds) {
-            if (isTimerRunning) return; 
-            timeRemaining += seconds;
-            if (timeRemaining < 0) timeRemaining = 0;
-            timerDuration = timeRemaining; 
-            updateTimerDisplay();
-        }
-
+        let timerDuration = 600, timeRemaining = 600, timerInterval = null, isTimerRunning = false;
+        function updateTimerDisplay() { if (timeRemaining < 0) timeRemaining = 0; const m = Math.floor(timeRemaining / 60), s = timeRemaining % 60; document.getElementById('timer-display').value = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`; }
+        function adjustTime(seconds) { if (isTimerRunning) return; timeRemaining += seconds; if (timeRemaining < 0) timeRemaining = 0; timerDuration = timeRemaining; updateTimerDisplay(); }
         function toggleTimer() {
-            const btn = document.getElementById('timer-toggle-btn');
-            const icon = btn.querySelector('i');
-            const timerInput = document.getElementById('timer-display');
-
-            if (isTimerRunning) {
-                clearInterval(timerInterval);
-                isTimerRunning = false;
-                btn.classList.remove('stop');
-                icon.className = 'fas fa-play';
-                icon.style.marginLeft = "5px"; 
-                timerInput.readOnly = false;
-            } else {
-                if (timeRemaining <= 0) return;
-                isTimerRunning = true;
-                btn.classList.add('stop');
-                icon.className = 'fas fa-pause';
-                icon.style.marginLeft = "0"; 
-                timerInput.readOnly = true;
-                
-                timerInterval = setInterval(() => {
-                    timeRemaining--;
-                    updateTimerDisplay();
-                    
-                    if (timeRemaining <= 0) {
-                        clearInterval(timerInterval);
-                        isTimerRunning = false;
-                        btn.classList.remove('stop');
-                        icon.className = 'fas fa-play';
-                        icon.style.marginLeft = "5px";
-                        timerInput.readOnly = false;
-                        
-                        ringBell();
-                    }
-                }, 1000);
-            }
+            const btn = document.getElementById('timer-toggle-btn'), icon = btn.querySelector('i'), timerInput = document.getElementById('timer-display');
+            if (isTimerRunning) { clearInterval(timerInterval); isTimerRunning = false; btn.classList.remove('stop'); icon.className = 'fas fa-play'; timerInput.readOnly = false; } 
+            else { if (timeRemaining <= 0) return; isTimerRunning = true; btn.classList.add('stop'); icon.className = 'fas fa-pause'; timerInput.readOnly = true; timerInterval = setInterval(() => { timeRemaining--; updateTimerDisplay(); if (timeRemaining <= 0) { clearInterval(timerInterval); isTimerRunning = false; btn.classList.remove('stop'); icon.className = 'fas fa-play'; timerInput.readOnly = false; ringBell(); } }, 1000); }
         }
+        function resetTimer() { if (isTimerRunning) { clearInterval(timerInterval); isTimerRunning = false; document.getElementById('timer-toggle-btn').classList.remove('stop'); document.querySelector('#timer-toggle-btn i').className = 'fas fa-play'; } document.getElementById('timer-display').readOnly = false; timeRemaining = timerDuration; updateTimerDisplay(); }
+        function parseTimeInput(inputStr) { if (!inputStr) return 0; let parts = inputStr.split(':'); if (parts.length === 2) return (parseInt(parts[0]) || 0) * 60 + (parseInt(parts[1]) || 0); else if (parts.length === 1) return parseInt(parts[0]) || 0; return 0; }
+        function ringBell() { const audio = document.getElementById('bell-sound'); if (audio) { audio.currentTime = 0; audio.play().catch(e => console.log("Audio play failed:", e)); } }
 
-        function resetTimer() {
-            if (isTimerRunning) {
-                clearInterval(timerInterval);
-                isTimerRunning = false;
-                const btn = document.getElementById('timer-toggle-btn');
-                const icon = btn.querySelector('i');
-                btn.classList.remove('stop');
-                icon.className = 'fas fa-play';
-                icon.style.marginLeft = "5px";
-            }
-            document.getElementById('timer-display').readOnly = false;
-            timeRemaining = timerDuration;
-            updateTimerDisplay();
-        }
-        
-        function parseTimeInput(inputStr) {
-            if (!inputStr) return 0;
-            let parts = inputStr.split(':');
-            
-            if (parts.length === 2) {
-                let m = parseInt(parts[0]) || 0;
-                let s = parseInt(parts[1]) || 0;
-                return m * 60 + s;
-            } else if (parts.length === 1) {
-                let val = parseInt(parts[0]) || 0;
-                return val;
-            }
-            return 0;
-        }
-
-        // ==========================================
-        // 6. Bell Logic (버튼은 삭제되었으나 타이머/룰렛용으로 유지)
-        // ==========================================
-        function ringBell() {
-            const audio = document.getElementById('bell-sound');
-            if (audio) {
-                audio.currentTime = 0; 
-                audio.play().catch(e => console.log("Audio play failed:", e));
-            }
-        }
-
-        // ==========================================
-        // 7. English Note Logic
-        // ==========================================
         let currentNoteFontSize = 80;
+        function changeNoteFontSize(delta) { currentNoteFontSize += delta; if (currentNoteFontSize < 30) currentNoteFontSize = 30; if (currentNoteFontSize > 200) currentNoteFontSize = 200; document.getElementById('english-note-input').style.fontSize = currentNoteFontSize + 'px'; }
+        function changeTextColor(color) { document.execCommand('styleWithCSS', false, true); document.execCommand('foreColor', false, color); document.getElementById('english-note-input').focus(); }
+        function changeKoreanFont(fontName) { document.getElementById('english-note-input').style.fontFamily = `'LetsTraceRuled', '${fontName}', sans-serif`; document.getElementById('english-note-input').focus(); }
+        function clearNote() { document.getElementById('english-note-input').innerHTML = ''; document.getElementById('english-note-input').focus(); }
 
-        function changeNoteFontSize(delta) {
-            currentNoteFontSize += delta;
-            if (currentNoteFontSize < 30) currentNoteFontSize = 30;
-            if (currentNoteFontSize > 200) currentNoteFontSize = 200;
-            
-            const noteInput = document.getElementById('english-note-input');
-            noteInput.style.fontSize = currentNoteFontSize + 'px';
-        }
-
-        function changeTextColor(color) {
-            document.execCommand('styleWithCSS', false, true);
-            document.execCommand('foreColor', false, color);
-            document.getElementById('english-note-input').focus();
-        }
-
-        function changeKoreanFont(fontName) {
-            const noteInput = document.getElementById('english-note-input');
-            noteInput.style.fontFamily = `'LetsTraceRuled', '${fontName}', sans-serif`;
-            noteInput.focus();
-        }
-
-        function clearNote() {
-            document.getElementById('english-note-input').innerHTML = '';
-            document.getElementById('english-note-input').focus();
-        }
-
-        // ==========================================
-        // 8. E-book Logic
-        // ==========================================
-        const ebookUrls = {
-            3: 'https://cdata2.tsherpa.co.kr/ebook/tsherpa/22/22ebook_E/TB2022TC1EE_30H/viewer/ebook/index.html?contentInformationURL=../../resource/ebook/&page=21',
-            4: 'https://cdata2.tsherpa.co.kr/ebook/tsherpa/22/22ebook_E/TB2022TC1EE_40H/viewer/ebook/index.html?contentInformationURL=..%2F..%2Fresource%2Febook%2F&page=14'
-        };
-
-        function toggleEbookPopup() {
-            const popup = document.getElementById('ebook-popup');
-            const btn = document.getElementById('btn-ebook');
-            popup.classList.toggle('show');
-            btn.classList.toggle('active');
-        }
-
-        function openEbook(grade) {
-            window.open(ebookUrls[grade], 'ebook_' + grade, 'width=1200,height=800');
-            document.getElementById('ebook-popup').classList.remove('show');
-            document.getElementById('btn-ebook').classList.remove('active');
-        }
-
-        document.addEventListener('click', function(e) {
-            const popup = document.getElementById('ebook-popup');
-            const btn = document.getElementById('btn-ebook');
-            if (popup && popup.classList.contains('show')) {
-                if (!popup.contains(e.target) && !btn.contains(e.target)) {
-                    popup.classList.remove('show');
-                    btn.classList.remove('active');
-                }
-            }
-        });
-
-        // ==========================================
-        // 9. Dock Toggle Logic
-        // ==========================================
+        const ebookUrls = { 3: 'https://cdata2.tsherpa.co.kr/ebook/tsherpa/22/22ebook_E/TB2022TC1EE_30H/viewer/ebook/index.html?contentInformationURL=../../resource/ebook/&page=21', 4: 'https://cdata2.tsherpa.co.kr/ebook/tsherpa/22/22ebook_E/TB2022TC1EE_40H/viewer/ebook/index.html?contentInformationURL=..%2F..%2Fresource%2Febook%2F&page=14' };
+        function toggleEbookPopup() { document.getElementById('ebook-popup').classList.toggle('show'); document.getElementById('btn-ebook').classList.toggle('active'); }
+        function openEbook(grade) { window.open(ebookUrls[grade], 'ebook_' + grade, 'width=1200,height=800'); document.getElementById('ebook-popup').classList.remove('show'); document.getElementById('btn-ebook').classList.remove('active'); }
+        
         let isDockVisible = true;
-
-        function toggleDock() {
-            const toolbar = document.getElementById('toolbar-container');
-            const toggleBtn = document.getElementById('dock-toggle');
-            const icon = toggleBtn.querySelector('i');
-
-            isDockVisible = !isDockVisible;
-
-            if (isDockVisible) {
-                toolbar.classList.remove('hidden');
-                icon.className = 'fas fa-chevron-down';
-                toggleBtn.title = '도구 모음 숨기기';
-                toggleBtn.style.bottom = '10px';
-            } else {
-                toolbar.classList.add('hidden');
-                icon.className = 'fas fa-chevron-up';
-                toggleBtn.title = '도구 모음 보이기';
-                toggleBtn.style.bottom = '10px';
-            }
-        }
-
+        function toggleDock() { isDockVisible = !isDockVisible; const toolbar = document.getElementById('toolbar-container'), icon = document.querySelector('#dock-toggle i'); if (isDockVisible) { toolbar.classList.remove('hidden'); icon.className = 'fas fa-chevron-down'; } else { toolbar.classList.add('hidden'); icon.className = 'fas fa-chevron-up'; } }
 
         // ==========================================
-        // 10. 룰렛 (Roulette) 통합 로직 Namespace
+        // 4. Roulette (인형뽑기/스캐닝 긴장감 기능 추가)
         // ==========================================
         const RouletteApp = {
-            COLORS: [
-                '#e74c3c','#3498db','#2ecc71','#f39c12',
-                '#9b59b6','#1abc9c','#e67e22','#34495e',
-                '#e91e63','#00bcd4','#8bc34a','#ff5722'
-            ],
-            canvas: null,
-            ctx: null,
-            cx: 0, cy: 0, radius: 0,
-            segments: [],
-            currentAngle: 0,
-            spinning: false,
-            lastWinnerIdx: -1,
-            idleRaf: null,
-            IDLE_SPEED: 0.003,
-
-            // 오디오 컨텍스트 및 틱 효과음 트래킹 변수 추가
-            audioCtx: null,
-            lastTickIdx: -1,
+            COLORS: ['#e74c3c','#3498db','#2ecc71','#f39c12','#9b59b6','#1abc9c','#e67e22','#34495e','#e91e63','#00bcd4','#8bc34a','#ff5722'],
+            canvas: null, ctx: null, cx: 0, cy: 0, radius: 0,
+            segments: [], currentAngle: 0, spinning: false, pickingMultiple: false,
+            lastWinnerIndices: [], 
+            idleRaf: null, IDLE_SPEED: 0.003,
+            audioCtx: null, lastTickIdx: -1,
 
             init: function() {
                 this.canvas = document.getElementById('roulette-wheel');
                 this.ctx = this.canvas.getContext('2d');
-                this.cx = this.canvas.width / 2;
-                this.cy = this.canvas.height / 2;
-                this.radius = this.cx - 10;
-
+                this.cx = this.canvas.width / 2; this.cy = this.canvas.height / 2; this.radius = this.cx - 10;
                 this.applyNames();
-
-                // 토글 이벤트 바인딩
                 document.getElementById('roulette-removeToggle').addEventListener('change', () => this.updateUI());
-
-                // 키보드 단축키 (Ctrl+Enter) - 위젯이 켜져있을 때만 동작하도록
                 document.addEventListener('keydown', e => {
                     const widget = document.getElementById('widget-roulette');
-                    if (e.ctrlKey && e.key === 'Enter' && widget.style.display !== 'none') {
-                        this.spin();
-                    }
+                    if (e.ctrlKey && e.key === 'Enter' && widget.style.display !== 'none') this.spin();
                 });
             },
 
+            // 일반 돌리기 시 틱 효과음
+            playTick: function() {
+                if (!this.audioCtx) return;
+                const osc = this.audioCtx.createOscillator(), gainNode = this.audioCtx.createGain();
+                osc.connect(gainNode); gainNode.connect(this.audioCtx.destination);
+                osc.type = 'sine'; osc.frequency.setValueAtTime(800, this.audioCtx.currentTime);
+                gainNode.gain.setValueAtTime(0.05, this.audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, this.audioCtx.currentTime + 0.05);
+                osc.start(); osc.stop(this.audioCtx.currentTime + 0.05);
+            },
+
+            // 탐색(스캐닝) 중 긴장감 넘치는 효과음 (오락실 스캐닝 사운드)
+            playSuspenseTick: function() {
+                if (!this.audioCtx) return;
+                const osc = this.audioCtx.createOscillator(), gainNode = this.audioCtx.createGain();
+                osc.connect(gainNode); gainNode.connect(this.audioCtx.destination);
+                osc.type = 'square'; 
+                // 랜덤 피치로 오락실 삐빅거리는 소리 연출
+                osc.frequency.setValueAtTime(300 + Math.random() * 400, this.audioCtx.currentTime); 
+                gainNode.gain.setValueAtTime(0.02, this.audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, this.audioCtx.currentTime + 0.05);
+                osc.start(); osc.stop(this.audioCtx.currentTime + 0.05);
+            },
+
+            // 당첨 빰빠밤 효과음
+            playTada: function() {
+                if (!this.audioCtx) return;
+                const notes = [{ f: 523.25, d: 0 }, { f: 659.25, d: 0.1 }, { f: 783.99, d: 0.2 }, { f: 1046.50, d: 0.3 }];
+                notes.forEach(note => {
+                    const osc = this.audioCtx.createOscillator(), gainNode = this.audioCtx.createGain();
+                    osc.connect(gainNode); gainNode.connect(this.audioCtx.destination);
+                    osc.type = 'triangle'; osc.frequency.value = note.f;
+                    const startTime = this.audioCtx.currentTime + note.d;
+                    gainNode.gain.setValueAtTime(0, this.audioCtx.currentTime);
+                    gainNode.gain.setValueAtTime(0.15, startTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + 1.0);
+                    osc.start(startTime); osc.stop(startTime + 1.0);
+                });
+            },
+
+            initAudio: function() {
+                if (!this.audioCtx) this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                if (this.audioCtx.state === 'suspended') this.audioCtx.resume();
+            },
+
             applyNames: function() {
-                const raw = document.getElementById('roulette-names').value
-                    .split('\n')
-                    .map(s => s.trim())
-                    .filter(s => s.length > 0);
-
-                if (raw.length < 2) {
-                    alert('항목을 최소 2개 이상 입력하세요.');
-                    return;
-                }
-
-                this.segments = raw.map((label, i) => ({
-                    label,
-                    color: this.COLORS[i % this.COLORS.length]
-                }));
-
-                this.currentAngle = 0;
-                document.getElementById('roulette-resultList').innerHTML = '';
-                this.updateUI();
-                this.startIdle();
+                const raw = document.getElementById('roulette-names').value.split('\n').map(s => s.trim()).filter(s => s.length > 0);
+                if (raw.length < 2) { alert('항목을 최소 2개 이상 입력하세요.'); return; }
+                this.segments = raw.map((label, i) => ({ label, color: this.COLORS[i % this.COLORS.length] }));
+                this.currentAngle = 0; document.getElementById('roulette-resultList').innerHTML = '';
+                this.updateUI(); this.startIdle();
             },
 
             clearAll: function() {
-                this.segments = [];
-                this.currentAngle = 0;
-                document.getElementById('roulette-names').value = '';
-                document.getElementById('roulette-resultList').innerHTML = '';
-                this.stopIdle();
-                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                this.segments = []; this.currentAngle = 0;
+                document.getElementById('roulette-names').value = ''; document.getElementById('roulette-resultList').innerHTML = '';
+                this.stopIdle(); this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
                 this.updateUI();
             },
 
             updateUI: function() {
                 document.getElementById('roulette-countNum').textContent = this.segments.length;
                 const empty = this.segments.length === 0;
-                document.getElementById('roulette-spinBtn').disabled = empty || this.spinning;
+                document.getElementById('roulette-spinBtn').disabled = empty || this.spinning || this.pickingMultiple;
+                document.querySelector('.multi-pick-btn').disabled = empty || this.spinning || this.pickingMultiple;
+                
                 document.getElementById('roulette-emptyMsg').style.display = empty ? 'block' : 'none';
                 document.getElementById('roulette-countBadge').style.display = empty ? 'none' : 'block';
-
                 const removeToggle = document.getElementById('roulette-removeToggle').checked;
                 const removeBtn = document.getElementById('roulette-removeBtn');
                 if(removeBtn) removeBtn.style.display = removeToggle ? 'inline-block' : 'none';
@@ -1447,197 +662,185 @@
 
             drawWheel: function(angle) {
                 if (this.segments.length === 0) return;
-
                 this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
                 const arc = (2 * Math.PI) / this.segments.length;
 
                 this.segments.forEach((seg, i) => {
-                    const start = angle + i * arc;
-                    const end   = start + arc;
+                    const start = angle + i * arc, end = start + arc;
+                    this.ctx.beginPath(); this.ctx.moveTo(this.cx, this.cy); this.ctx.arc(this.cx, this.cy, this.radius, start, end); this.ctx.closePath();
+                    this.ctx.fillStyle = seg.color; this.ctx.fill(); this.ctx.strokeStyle = 'rgba(255,255,255,0.25)'; this.ctx.lineWidth = 1.5; this.ctx.stroke();
 
-                    this.ctx.beginPath();
-                    this.ctx.moveTo(this.cx, this.cy);
-                    this.ctx.arc(this.cx, this.cy, this.radius, start, end);
-                    this.ctx.closePath();
-                    this.ctx.fillStyle = seg.color;
-                    this.ctx.fill();
-                    this.ctx.strokeStyle = 'rgba(255,255,255,0.25)';
-                    this.ctx.lineWidth = 1.5;
-                    this.ctx.stroke();
-
-                    this.ctx.save();
-                    this.ctx.translate(this.cx, this.cy);
-                    this.ctx.rotate(start + arc / 2);
-
-                    const maxLen   = Math.min(this.radius * 0.72, 160);
+                    this.ctx.save(); this.ctx.translate(this.cx, this.cy); this.ctx.rotate(start + arc / 2);
+                    const maxLen = Math.min(this.radius * 0.72, 160);
                     const fontSize = Math.max(10, Math.min(18, maxLen / (seg.label.length * 0.65)));
-                    this.ctx.font = `bold ${fontSize}px 'Segoe UI', sans-serif`;
-                    this.ctx.fillStyle = '#fff';
-                    this.ctx.textAlign = 'right';
-                    this.ctx.textBaseline = 'middle';
-                    this.ctx.shadowColor = 'rgba(0,0,0,0.6)';
-                    this.ctx.shadowBlur  = 4;
-
-                    let text = seg.label;
-                    while (this.ctx.measureText(text).width > maxLen && text.length > 1) {
-                        text = text.slice(0, -1);
-                    }
+                    this.ctx.font = `bold ${fontSize}px 'Segoe UI', sans-serif`; this.ctx.fillStyle = '#fff'; this.ctx.textAlign = 'right'; this.ctx.textBaseline = 'middle'; this.ctx.shadowColor = 'rgba(0,0,0,0.6)'; this.ctx.shadowBlur = 4;
+                    let text = seg.label; while (this.ctx.measureText(text).width > maxLen && text.length > 1) { text = text.slice(0, -1); }
                     if (text !== seg.label) text += '…';
-
-                    this.ctx.fillText(text, this.radius - 14, 0);
-                    this.ctx.restore();
+                    this.ctx.fillText(text, this.radius - 14, 0); this.ctx.restore();
                 });
-
-                // 중앙 원
-                this.ctx.beginPath();
-                this.ctx.arc(this.cx, this.cy, 22, 0, 2 * Math.PI);
-                this.ctx.fillStyle = '#fff';
-                this.ctx.fill();
-                this.ctx.strokeStyle = '#ccc';
-                this.ctx.lineWidth = 2;
-                this.ctx.stroke();
+                this.ctx.beginPath(); this.ctx.arc(this.cx, this.cy, 22, 0, 2 * Math.PI); this.ctx.fillStyle = '#fff'; this.ctx.fill(); this.ctx.strokeStyle = '#ccc'; this.ctx.lineWidth = 2; this.ctx.stroke();
             },
 
             startIdle: function() {
                 if (this.idleRaf) return;
                 const loop = () => {
                     if (this.spinning) { this.idleRaf = null; return; }
-                    this.currentAngle += this.IDLE_SPEED;
-                    this.drawWheel(this.currentAngle);
+                    this.currentAngle += this.IDLE_SPEED; this.drawWheel(this.currentAngle);
                     this.idleRaf = requestAnimationFrame(loop);
                 }
                 this.idleRaf = requestAnimationFrame(loop);
             },
 
-            stopIdle: function() {
-                if (this.idleRaf) {
-                    cancelAnimationFrame(this.idleRaf);
-                    this.idleRaf = null;
-                }
-            },
+            stopIdle: function() { if (this.idleRaf) { cancelAnimationFrame(this.idleRaf); this.idleRaf = null; } },
 
-            // 룰렛 돌아갈 때 틱(Tick) 효과음 재생
-            playTick: function() {
-                if (!this.audioCtx) return;
-                const osc = this.audioCtx.createOscillator();
-                const gainNode = this.audioCtx.createGain();
-                osc.connect(gainNode);
-                gainNode.connect(this.audioCtx.destination);
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(800, this.audioCtx.currentTime);
-                gainNode.gain.setValueAtTime(0.05, this.audioCtx.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.001, this.audioCtx.currentTime + 0.05);
-                osc.start();
-                osc.stop(this.audioCtx.currentTime + 0.05);
-            },
-
-            // 당첨 시 빰빠밤(Tada) 효과음 재생
-            playTada: function() {
-                if (!this.audioCtx) return;
-                const notes = [
-                    { f: 523.25, d: 0 },    // 도
-                    { f: 659.25, d: 0.1 },  // 미
-                    { f: 783.99, d: 0.2 },  // 솔
-                    { f: 1046.50, d: 0.3 }  // 높은 도
-                ];
-                notes.forEach(note => {
-                    const osc = this.audioCtx.createOscillator();
-                    const gainNode = this.audioCtx.createGain();
-                    osc.connect(gainNode);
-                    gainNode.connect(this.audioCtx.destination);
-                    osc.type = 'triangle';
-                    osc.frequency.value = note.f;
-                    
-                    const startTime = this.audioCtx.currentTime + note.d;
-                    gainNode.gain.setValueAtTime(0, this.audioCtx.currentTime);
-                    gainNode.gain.setValueAtTime(0.15, startTime);
-                    gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + 1.0);
-                    
-                    osc.start(startTime);
-                    osc.stop(startTime + 1.0);
-                });
-            },
-
+            // 1. 단일 뽑기
             spin: function() {
-                if (this.spinning || this.segments.length < 2) return;
-                
-                // 오디오 초기화 (브라우저 정책상 사용자 상호작용 시점에 생성/재개)
-                if (!this.audioCtx) {
-                    this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                }
-                if (this.audioCtx.state === 'suspended') {
-                    this.audioCtx.resume();
-                }
+                if (this.spinning || this.pickingMultiple || this.segments.length < 2) return;
+                this.initAudio();
+                this.spinning = true; this.stopIdle(); this.updateUI();
 
-                this.spinning = true;
-                this.stopIdle();
-                document.getElementById('roulette-spinBtn').disabled = true;
-
-                const totalSpin  = (5 + Math.random() * 5) * 2 * Math.PI + Math.random() * 2 * Math.PI;
-                const duration   = 4000 + Math.random() * 1500;
-                const startTime  = performance.now();
+                const totalSpin = (5 + Math.random() * 5) * 2 * Math.PI + Math.random() * 2 * Math.PI;
+                const duration = 4000 + Math.random() * 1500;
+                const startTime = performance.now();
                 const startAngle = this.currentAngle;
-
                 const easeOut = (t) => 1 - Math.pow(1 - t, 4);
 
                 const frame = (now) => {
-                    const elapsed  = now - startTime;
-                    const progress = Math.min(elapsed / duration, 1);
+                    const elapsed = now - startTime; const progress = Math.min(elapsed / duration, 1);
                     this.currentAngle = startAngle + totalSpin * easeOut(progress);
                     this.drawWheel(this.currentAngle);
 
-                    // 틱 소리 재생 로직 추가 (경계선 통과 시)
                     const arc = (2 * Math.PI) / this.segments.length;
                     const normalised = ((-this.currentAngle) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
                     const currentIdx = Math.floor(normalised / arc) % this.segments.length;
-                    
-                    if (this.lastTickIdx !== currentIdx) {
-                        this.playTick();
-                        this.lastTickIdx = currentIdx;
-                    }
+                    if (this.lastTickIdx !== currentIdx) { this.playTick(); this.lastTickIdx = currentIdx; }
 
-                    if (progress < 1) {
-                        requestAnimationFrame(frame);
-                    } else {
-                        this.spinning = false;
-                        this.calcWinner();
-                    }
+                    if (progress < 1) requestAnimationFrame(frame);
+                    else { this.spinning = false; this.calcSingleWinner(); }
                 };
-
                 requestAnimationFrame(frame);
             },
 
-            calcWinner: function() {
+            calcSingleWinner: function() {
                 const arc = (2 * Math.PI) / this.segments.length;
                 const normalised = ((-this.currentAngle) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
-                this.lastWinnerIdx = Math.floor(normalised / arc) % this.segments.length;
-                const winner = this.segments[this.lastWinnerIdx].label;
+                const winnerIdx = Math.floor(normalised / arc) % this.segments.length;
+                
+                this.lastWinnerIndices = [winnerIdx];
+                
+                // 모달 텍스트 리셋
+                document.querySelector('.roulette-modal-box h2').innerHTML = '🎉 당첨!';
+                document.querySelector('.roulette-modal-btn-row').style.display = 'flex';
+                
+                this.showResultModal();
+            },
 
-                document.getElementById('roulette-winnerText').textContent = winner;
+            // 2. 다중 뽑기 (긴장감 애니메이션 적용)
+            pickMultiple: function() {
+                if (this.segments.length < 1 || this.spinning || this.pickingMultiple) return;
+                
+                let countInput = document.getElementById('multi-pick-count');
+                let count = parseInt(countInput.value) || 1;
+                if (count < 1) count = 1;
+                if (count > this.segments.length) {
+                    count = this.segments.length;
+                    countInput.value = count;
+                }
+
+                this.initAudio();
+                this.pickingMultiple = true;
+                this.updateUI(); // 버튼 비활성화
+
+                // 1) 미리 진짜 당첨자 확정해두기
+                let indices = Array.from(this.segments.keys());
+                for (let i = indices.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [indices[i], indices[j]] = [indices[j], indices[i]];
+                }
+                this.lastWinnerIndices = indices.slice(0, count);
+
+                // 2) 긴장감 모드 UI 세팅 (모달 바로 띄우기)
+                document.getElementById('roulette-modal').classList.add('show');
+                const titleEl = document.querySelector('.roulette-modal-box h2');
+                const textEl = document.getElementById('roulette-winnerText');
+                const btnRow = document.querySelector('.roulette-modal-btn-row');
+                
+                titleEl.innerHTML = '🕹️ 타겟을 찾는 중...';
+                btnRow.style.display = 'none';
+
+                let ticks = 0;
+                const maxTicks = 25; // 2.5초 동안 긴장감 애니메이션 (100ms * 25)
+
+                // 3) 인터벌 애니메이션 시작
+                const suspenseInterval = setInterval(() => {
+                    ticks++;
+                    
+                    // 화면에 보일 가짜(스캐닝용) 명단 섞기
+                    let dummyPool = Array.from(this.segments.keys());
+                    for (let i = dummyPool.length - 1; i > 0; i--) {
+                        const j = Math.floor(Math.random() * (i + 1));
+                        [dummyPool[i], dummyPool[j]] = [dummyPool[j], dummyPool[i]];
+                    }
+                    const dummyIndices = dummyPool.slice(0, count);
+                    
+                    // 회색조의 작은 더미 태그로 화면에 출력
+                    const dummyTags = dummyIndices.map(idx => 
+                        `<span class="dummy-tag">${this.segments[idx].label}</span>`
+                    ).join('');
+                    
+                    textEl.innerHTML = dummyTags;
+                    this.playSuspenseTick(); // 띠딕! 오락실 사운드
+
+                    // 4) 시간이 다 되면 종료하고 진짜 당첨자 공개
+                    if (ticks >= maxTicks) {
+                        clearInterval(suspenseInterval);
+                        this.pickingMultiple = false;
+                        
+                        titleEl.innerHTML = '🎉 당첨!';
+                        btnRow.style.display = 'flex';
+                        
+                        this.showResultModal(); // 진짜 결과 공개
+                    }
+                }, 100);
+            },
+
+            // 결과를 화면에 띄우는 공통 로직
+            showResultModal: function() {
+                const winners = this.lastWinnerIndices.map(idx => this.segments[idx].label);
+                
+                // 진짜 당첨 태그 (팝! 하고 튀어나오는 애니메이션 포함)
+                const tagsHtml = winners.map((w, index) => 
+                    `<span class="winner-tag" style="animation-delay: ${index * 0.1}s">${w}</span>`
+                ).join('');
+                
+                document.getElementById('roulette-winnerText').innerHTML = tagsHtml;
+
+                // 결과 히스토리 기록 (중복 기록 방지를 위해 여기서 한 번만)
+                const li = document.createElement('li');
+                li.textContent = `#${document.getElementById('roulette-resultList').children.length + 1} → [ ${winners.join(', ')} ]`;
+                document.getElementById('roulette-resultList').prepend(li);
+                
+                this.playTada();
 
                 const removeBtn = document.getElementById('roulette-removeBtn');
                 removeBtn.style.display = document.getElementById('roulette-removeToggle').checked ? 'inline-block' : 'none';
 
+                // 모달 띄우기 (다중뽑기의 경우 이미 떠있지만, 혹시 몰라 클래스 재보장)
                 document.getElementById('roulette-modal').classList.add('show');
-
-                const li = document.createElement('li');
-                li.textContent = `#${document.getElementById('roulette-resultList').children.length + 1} → ${winner}`;
-                document.getElementById('roulette-resultList').prepend(li);
-                
-                // 당첨 효과음 재생
-                this.playTada();
-
-                // 탁상벨 소리 함께 울림 (선택사항, 필요없으시면 주석처리하세요)
-                ringBell(); 
             },
 
+            // 모달 닫기 및 명단 제외
             closeModal: function(remove) {
                 document.getElementById('roulette-modal').classList.remove('show');
 
-                if (remove && this.lastWinnerIdx >= 0) {
-                    this.segments.splice(this.lastWinnerIdx, 1);
-                    this.lastWinnerIdx = -1;
+                if (remove && this.lastWinnerIndices.length > 0) {
+                    // 삭제 시 배열 순서가 밀리지 않도록 뒤(인덱스가 큰 값)에서부터 지웁니다.
+                    let sortedIndices = [...this.lastWinnerIndices].sort((a, b) => b - a);
+                    sortedIndices.forEach(idx => {
+                        this.segments.splice(idx, 1);
+                    });
+                    
+                    this.lastWinnerIndices = [];
                     this.updateUI();
 
                     if (this.segments.length === 0) {
@@ -1647,62 +850,37 @@
                     }
                 }
 
+                this.lastWinnerIndices = [];
                 this.updateUI();
                 this.drawWheel(this.currentAngle);
                 this.startIdle();
             }
         };
 
-
-        // ==========================================
-        // Initialization
-        // ==========================================
         window.onload = () => {
             initBackgrounds();
             document.querySelectorAll('.widget').forEach(makeDraggable);
-            
-            setInterval(updateClock, 1000);
-            updateClock();
-            
-            updateTimerDisplay();
+            setInterval(updateClock, 1000); updateClock(); updateTimerDisplay();
 
             const timerInput = document.getElementById('timer-display');
-            
-            timerInput.addEventListener('click', function() {
-                if (!isTimerRunning) {
-                    this.select();
-                }
-            });
-
+            timerInput.addEventListener('click', function() { if (!isTimerRunning) this.select(); });
             timerInput.addEventListener('blur', function() {
-                if (!isTimerRunning) {
-                    let newTime = parseTimeInput(this.value);
-                    timeRemaining = newTime;
-                    timerDuration = newTime; 
-                    updateTimerDisplay();
-                }
+                if (!isTimerRunning) { let newTime = parseTimeInput(this.value); timeRemaining = newTime; timerDuration = newTime; updateTimerDisplay(); }
             });
-
-            timerInput.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    this.blur();
-                }
-            });
+            timerInput.addEventListener('keypress', function(e) { if (e.key === 'Enter') this.blur(); });
 
             const noteInput = document.getElementById('english-note-input');
             noteInput.addEventListener('keydown', function(e) {
-                if (e.key === ' ') {
-                    e.preventDefault();
-                    document.execCommand('insertText', false, '\u00A0\u200B');
-                }
+                if (e.key === ' ') { e.preventDefault(); document.execCommand('insertText', false, '\u00A0\u200B'); }
             });
 
-            // 룰렛 초기화
             RouletteApp.init();
-
-            // 초기 실행 시 기본 위젯 켜기
-            toggleWidget('widget-clock', 'btn-clock');
+            
+            // 초기 실행 시 켜둘 위젯 설정
+            toggleWidget('widget-clock', 'btn-clock'); 
             toggleWidget('widget-note', 'btn-note');
+            // 룰렛 위젯도 처음에 열어두려면 아래 주석을 해제하세요.
+            // toggleWidget('widget-roulette', 'btn-roulette');
         };
 
     </script>
