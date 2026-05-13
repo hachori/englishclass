@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QR 스캐너</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+KR:wght@400;500&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0f0f0f;
+    --surface: #1a1a1a;
+    --surface2: #242424;
+    --border: #2e2e2e;
+    --border-bright: #404040;
+    --accent: #00e5a0;
+    --accent-dim: rgba(0,229,160,0.12);
+    --accent-dim2: rgba(0,229,160,0.06);
+    --text: #e8e8e8;
+    --text-muted: #888;
+    --text-dim: #555;
+    --danger: #ff5f5f;
+    --mono: 'IBM Plex Mono', monospace;
+    --sans: 'Noto Sans KR', sans-serif;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2.5rem 1rem 4rem;
+    user-select: none;
+  }
+
+  /* header */
+  header {
+    width: 100%;
+    max-width: 640px;
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 2.5rem;
+  }
+  .logo {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--accent);
+    letter-spacing: .08em;
+  }
+  .logo-sep { color: var(--border-bright); font-family: var(--mono); font-size: 13px; }
+  .logo-sub { font-family: var(--mono); font-size: 11px; color: var(--text-dim); letter-spacing: .06em; }
+
+  /* drop zone */
+  #drop-zone {
+    width: 100%;
+    max-width: 640px;
+    border: 1.5px dashed var(--border-bright);
+    border-radius: 12px;
+    background: var(--surface);
+    transition: border-color .2s, background .2s, transform .15s;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  #drop-zone:focus { outline: 2px solid var(--accent); outline-offset: 3px; }
+  #drop-zone.drag-over {
+    border-color: var(--accent);
+    background: var(--accent-dim2);
+    transform: scale(1.01);
+  }
+  #drop-zone.paste-ready {
+    border-color: var(--accent);
+    border-style: solid;
+  }
+
+  .zone-inner {
+    padding: 3rem 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    text-align: center;
+  }
+  .zone-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 12px;
+    background: var(--surface2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background .2s;
+  }
+  #drop-zone.drag-over .zone-icon,
+  #drop-zone.paste-ready .zone-icon {
+    background: var(--accent-dim);
+  }
+  .zone-icon svg { width: 24px; height: 24px; stroke: var(--accent); fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+
+  .zone-title {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.4;
+  }
+  .zone-hint {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+  .kbd {
+    display: inline-block;
+    background: var(--surface2);
+    border: 1px solid var(--border-bright);
+    border-radius: 5px;
+    padding: 1px 7px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    vertical-align: middle;
+  }
+
+  /* 파일선택 링크 */
+  .file-link {
+    font-size: 12px;
+    color: var(--text-dim);
+    font-family: var(--mono);
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    transition: color .15s;
+  }
+  .file-link:hover { color: var(--text-muted); }
+  #file-input { display: none; }
+
+  /* pulse ring when paste-ready */
+  @keyframes pulse-ring {
+    0%   { box-shadow: 0 0 0 0 rgba(0,229,160,0.25); }
+    70%  { box-shadow: 0 0 0 10px rgba(0,229,160,0); }
+    100% { box-shadow: 0 0 0 0 rgba(0,229,160,0); }
+  }
+  #drop-zone.paste-ready { animation: pulse-ring 2s infinite; }
+
+  /* preview */
+  #preview-wrap {
+    width: 100%;
+    max-width: 640px;
+    margin-top: 1.25rem;
+    display: none;
+  }
+  #preview-wrap.visible { display: block; }
+  #preview-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: .6rem;
+  }
+  .preview-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: .06em;
+    text-transform: uppercase;
+  }
+  #clear-btn {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: 4px;
+    transition: color .15s, background .15s;
+  }
+  #clear-btn:hover { color: var(--danger); background: rgba(255,95,95,.08); }
+
+  #img-canvas-wrap {
+    position: relative;
+    border-radius: 10px;
+    overflow: hidden;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    max-height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  #preview-canvas {
+    max-width: 100%;
+    max-height: 300px;
+    display: block;
+  }
+  /* highlight overlay rects drawn by JS */
+
+  /* result area */
+  #results {
+    width: 100%;
+    max-width: 640px;
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .result-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    animation: slide-in .2s ease both;
+  }
+  @keyframes slide-in {
+    from { opacity:0; transform: translateY(6px); }
+    to   { opacity:1; transform: translateY(0); }
+  }
+  .result-card.is-url { border-color: rgba(0,229,160,.3); }
+
+  .result-top {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: .9rem 1rem;
+  }
+  .result-type-badge {
+    font-family: var(--mono);
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 4px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .badge-url  { background: var(--accent-dim); color: var(--accent); }
+  .badge-text { background: var(--surface2); color: var(--text-muted); }
+
+  .result-value {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--text);
+    word-break: break-all;
+    line-height: 1.6;
+    flex: 1;
+    user-select: text;
+  }
+
+  .result-actions {
+    display: flex;
+    border-top: 1px solid var(--border);
+    background: var(--surface2);
+  }
+  .action-btn {
+    flex: 1;
+    padding: .6rem .5rem;
+    background: none;
+    border: none;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: background .15s, color .15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  .action-btn + .action-btn { border-left: 1px solid var(--border); }
+  .action-btn:hover { background: var(--accent-dim); color: var(--accent); }
+  .action-btn.copied { color: var(--accent); }
+  .action-btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+  .open-btn { color: var(--accent); }
+  .open-btn:hover { background: var(--accent); color: #000; }
+
+  /* error */
+  #error-msg {
+    width: 100%;
+    max-width: 640px;
+    margin-top: .75rem;
+    display: none;
+    background: rgba(255,95,95,.08);
+    border: 1px solid rgba(255,95,95,.25);
+    border-radius: 8px;
+    padding: .7rem 1rem;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--danger);
+  }
+  #error-msg.visible { display: block; }
+
+  /* history */
+  #history-wrap {
+    width: 100%;
+    max-width: 640px;
+    margin-top: 2.5rem;
+    display: none;
+  }
+  #history-wrap.visible { display: block; }
+  .history-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: .75rem;
+  }
+  .history-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: .06em;
+    text-transform: uppercase;
+  }
+  #clear-history-btn {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: color .15s;
+  }
+  #clear-history-btn:hover { color: var(--danger); }
+
+  .history-list { display: flex; flex-direction: column; gap: 6px; }
+  .history-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: .55rem .9rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    cursor: default;
+    transition: border-color .15s;
+  }
+  .history-item:hover { border-color: var(--border-bright); }
+  .history-time { font-family: var(--mono); font-size: 10px; color: var(--text-dim); flex-shrink: 0; width: 44px; }
+  .history-val {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-muted);
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .history-badge {
+    font-family: var(--mono);
+    font-size: 9px;
+    padding: 1px 5px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+  .history-item.h-url .history-badge { background: var(--accent-dim); color: var(--accent); }
+  .history-item.h-text .history-badge { background: var(--surface2); color: var(--text-dim); }
+
+  /* footer hint */
+  #status-bar {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    padding: .5rem 1rem;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    text-align: center;
+    background: var(--bg);
+    border-top: 1px solid var(--border);
+    pointer-events: none;
+  }
+  .status-dot {
+    display: inline-block;
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--accent);
+    margin-right: 6px;
+    vertical-align: middle;
+    animation: blink 2.4s infinite;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+  /* loading spinner */
+  #spinner {
+    display: none;
+    width: 100%;
+    max-width: 640px;
+    margin-top: 1rem;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+  #spinner.visible { display: flex; }
+  .spin-ring {
+    width: 16px; height: 16px;
+    border: 1.5px solid var(--border-bright);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin .6s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<header>
+  <span class="logo">QR.SCAN</span>
+  <span class="logo-sep">/</span>
+  <span class="logo-sub">clipboard · drop · select</span>
+</header>
+
+<!-- Drop / Paste Zone -->
+<div id="drop-zone" tabindex="0" role="button" aria-label="QR 이미지 붙여넣기 또는 드래그">
+  <div class="zone-inner">
+    <div class="zone-icon">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="3" height="3"/><rect x="19" y="14" width="2" height="2"/><rect x="14" y="19" width="2" height="2"/><rect x="19" y="19" width="2" height="2"/></svg>
+    </div>
+    <div class="zone-title">
+      <kbd class="kbd">Ctrl</kbd> + <kbd class="kbd">V</kbd> 로 붙여넣기
+    </div>
+    <div class="zone-hint">
+      캡처한 QR 이미지를 클립보드에서 바로 붙여넣으세요<br>
+      또는 이미지 파일을 여기 드래그하거나 →
+      <span class="file-link" id="file-link-btn">파일 선택</span>
+    </div>
+  </div>
+</div>
+<input type="file" id="file-input" accept="image/*">
+
+<!-- Spinner -->
+<div id="spinner"><div class="spin-ring"></div> 디코딩 중...</div>
+
+<!-- Error -->
+<div id="error-msg"></div>
+
+<!-- Preview -->
+<div id="preview-wrap">
+  <div id="preview-header">
+    <span class="preview-label">이미지 미리보기</span>
+    <button id="clear-btn">✕ 초기화</button>
+  </div>
+  <div id="img-canvas-wrap">
+    <canvas id="preview-canvas"></canvas>
+  </div>
+</div>
+
+<!-- Results -->
+<div id="results"></div>
+
+<!-- History -->
+<div id="history-wrap">
+  <div class="history-header">
+    <span class="history-label">이번 세션 기록</span>
+    <button id="clear-history-btn">전체 삭제</button>
+  </div>
+  <div class="history-list" id="history-list"></div>
+</div>
+
+<!-- Status bar -->
+<div id="status-bar">
+  <span class="status-dot"></span>
+  클립보드 붙여넣기 대기 중 — 어디서든 Ctrl+V 하면 인식합니다
+</div>
+
+<!-- jsQR -->
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+<script>
+const dropZone   = document.getElementById('drop-zone');
+const fileInput  = document.getElementById('file-input');
+const fileLinkBtn= document.getElementById('file-link-btn');
+const previewWrap= document.getElementById('preview-wrap');
+const previewCanvas=document.getElementById('preview-canvas');
+const spinner    = document.getElementById('spinner');
+const errorMsg   = document.getElementById('error-msg');
+const resultsDiv = document.getElementById('results');
+const historyWrap= document.getElementById('history-wrap');
+const historyList= document.getElementById('history-list');
+const clearBtn   = document.getElementById('clear-btn');
+const clearHistBtn=document.getElementById('clear-history-btn');
+
+let sessionHistory = [];
+
+// ── helpers ──────────────────────────────────────────────────
+function isURL(s) {
+  try { const u = new URL(s); return u.protocol === 'http:' || u.protocol === 'https:'; }
+  catch { return false; }
+}
+
+function showError(msg) {
+  errorMsg.textContent = msg;
+  errorMsg.classList.add('visible');
+  setTimeout(() => errorMsg.classList.remove('visible'), 4000);
+}
+
+function hideError() { errorMsg.classList.remove('visible'); }
+
+function setSpinner(on) {
+  spinner.classList.toggle('visible', on);
+}
+
+// ── decode image ──────────────────────────────────────────────
+function decodeImage(imgSrc) {
+  hideError();
+  setSpinner(true);
+  resultsDiv.innerHTML = '';
+
+  const img = new Image();
+  img.onload = () => {
+    // draw to preview canvas
+    const ctx = previewCanvas.getContext('2d');
+    const maxW = 640, maxH = 300;
+    let w = img.naturalWidth, h = img.naturalHeight;
+    const ratio = Math.min(maxW / w, maxH / h, 1);
+    w = Math.round(w * ratio); h = Math.round(h * ratio);
+    previewCanvas.width  = img.naturalWidth;
+    previewCanvas.height = img.naturalHeight;
+    previewCanvas.style.maxWidth  = '100%';
+    previewCanvas.style.maxHeight = '300px';
+    ctx.drawImage(img, 0, 0);
+    previewWrap.classList.add('visible');
+
+    // jsQR decode
+    const imageData = ctx.getImageData(0, 0, img.naturalWidth, img.naturalHeight);
+    const codes = [];
+    const code = jsQR(imageData.data, imageData.width, imageData.height, {
+      inversionAttempts: 'dontInvert'
+    });
+    if (code) codes.push(code);
+    // try inverted
+    if (!code) {
+      const code2 = jsQR(imageData.data, imageData.width, imageData.height, {
+        inversionAttempts: 'onlyInvert'
+      });
+      if (code2) codes.push(code2);
+    }
+
+    setSpinner(false);
+
+    if (codes.length === 0) {
+      showError('QR 코드를 찾을 수 없습니다. 이미지를 더 크게 캡처하거나, 다른 이미지를 붙여넣어 보세요.');
+      return;
+    }
+
+    // draw highlight box
+    codes.forEach(c => {
+      ctx.beginPath();
+      ctx.moveTo(c.location.topLeftCorner.x,     c.location.topLeftCorner.y);
+      ctx.lineTo(c.location.topRightCorner.x,    c.location.topRightCorner.y);
+      ctx.lineTo(c.location.bottomRightCorner.x, c.location.bottomRightCorner.y);
+      ctx.lineTo(c.location.bottomLeftCorner.x,  c.location.bottomLeftCorner.y);
+      ctx.closePath();
+      ctx.lineWidth   = Math.max(3, img.naturalWidth * 0.004);
+      ctx.strokeStyle = '#00e5a0';
+      ctx.stroke();
+      ctx.fillStyle = 'rgba(0,229,160,0.12)';
+      ctx.fill();
+    });
+
+    codes.forEach(c => renderResult(c.data));
+  };
+  img.onerror = () => { setSpinner(false); showError('이미지를 불러올 수 없습니다.'); };
+  img.src = imgSrc;
+}
+
+// ── render result card ────────────────────────────────────────
+function renderResult(data) {
+  const url = isURL(data);
+  const card = document.createElement('div');
+  card.className = 'result-card' + (url ? ' is-url' : '');
+
+  const badge = url ? '<span class="result-type-badge badge-url">URL</span>'
+                    : '<span class="result-type-badge badge-text">TEXT</span>';
+
+  const actions = url
+    ? `<button class="action-btn" onclick="copyText(this,'${escAttr(data)}')"><svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>복사</button>
+       <button class="action-btn open-btn" onclick="openURL('${escAttr(data)}')"><svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>링크 열기</button>`
+    : `<button class="action-btn" onclick="copyText(this,'${escAttr(data)}')"><svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>클립보드에 복사</button>`;
+
+  card.innerHTML = `
+    <div class="result-top">
+      ${badge}
+      <div class="result-value">${escHTML(data)}</div>
+    </div>
+    <div class="result-actions">${actions}</div>`;
+
+  resultsDiv.appendChild(card);
+
+  // auto-open URL on first decode
+  if (url && resultsDiv.children.length === 1) {
+    // short delay so user sees the card first
+    setTimeout(() => { /* don't auto-open; user decides */ }, 100);
+  }
+
+  addHistory(data, url);
+}
+
+function escHTML(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function escAttr(s) {
+  return s.replace(/'/g,"\\'").replace(/"/g,'&quot;');
+}
+
+// ── history ───────────────────────────────────────────────────
+function addHistory(data, url) {
+  const now = new Date();
+  const t = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
+  sessionHistory.unshift({ data, url, t });
+  renderHistory();
+  historyWrap.classList.add('visible');
+}
+
+function renderHistory() {
+  historyList.innerHTML = '';
+  sessionHistory.forEach(item => {
+    const div = document.createElement('div');
+    div.className = 'history-item ' + (item.url ? 'h-url' : 'h-text');
+    div.innerHTML = `<span class="history-time">${item.t}</span>
+      <span class="history-val">${escHTML(item.data)}</span>
+      <span class="history-badge">${item.url ? 'URL' : 'TXT'}</span>`;
+    historyList.appendChild(div);
+  });
+}
+
+// ── actions ───────────────────────────────────────────────────
+window.copyText = function(btn, text) {
+  navigator.clipboard.writeText(text).then(() => {
+    const orig = btn.innerHTML;
+    btn.innerHTML = '<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>복사됨';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.innerHTML = orig; btn.classList.remove('copied'); }, 1500);
+  });
+};
+window.openURL = function(url) {
+  window.open(url, '_blank', 'noopener,noreferrer');
+};
+
+// ── process blob/file ─────────────────────────────────────────
+function processBlob(blob) {
+  const reader = new FileReader();
+  reader.onload = e => decodeImage(e.target.result);
+  reader.readAsDataURL(blob);
+}
+
+function clearAll() {
+  previewWrap.classList.remove('visible');
+  resultsDiv.innerHTML = '';
+  hideError();
+  const ctx = previewCanvas.getContext('2d');
+  ctx.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
+}
+
+// ── Clipboard paste (Ctrl+V anywhere) ────────────────────────
+document.addEventListener('paste', e => {
+  const items = (e.clipboardData || e.originalEvent?.clipboardData)?.items;
+  if (!items) return;
+  for (const item of items) {
+    if (item.type.startsWith('image/')) {
+      e.preventDefault();
+      clearAll();
+      processBlob(item.getAsFile());
+      return;
+    }
+  }
+  showError('클립보드에 이미지가 없습니다. 스크린샷이나 QR 이미지를 먼저 복사하세요.');
+});
+
+// ── Drag & Drop ───────────────────────────────────────────────
+['dragenter','dragover'].forEach(ev => {
+  dropZone.addEventListener(ev, e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+});
+['dragleave','dragend'].forEach(ev => {
+  dropZone.addEventListener(ev, () => dropZone.classList.remove('drag-over'));
+});
+dropZone.addEventListener('drop', e => {
+  e.preventDefault();
+  dropZone.classList.remove('drag-over');
+  const file = e.dataTransfer?.files[0];
+  if (file && file.type.startsWith('image/')) { clearAll(); processBlob(file); }
+  else showError('이미지 파일만 지원합니다.');
+});
+
+// ── File select ───────────────────────────────────────────────
+fileLinkBtn.addEventListener('click', e => { e.stopPropagation(); fileInput.click(); });
+fileInput.addEventListener('change', () => {
+  const file = fileInput.files[0];
+  if (file) { clearAll(); processBlob(file); fileInput.value = ''; }
+});
+
+// ── Clear ─────────────────────────────────────────────────────
+clearBtn.addEventListener('click', clearAll);
+clearHistBtn.addEventListener('click', () => {
+  sessionHistory = [];
+  historyList.innerHTML = '';
+  historyWrap.classList.remove('visible');
+});
+
+// ── Keyboard: Enter/Space on dropzone ────────────────────────
+dropZone.addEventListener('keydown', e => {
+  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileInput.click(); }
+});
+
+// ── Paste-ready pulse on focus ────────────────────────────────
+window.addEventListener('focus', () => dropZone.classList.add('paste-ready'));
+window.addEventListener('blur',  () => dropZone.classList.remove('paste-ready'));
+dropZone.classList.add('paste-ready');
+</script>
+</body>
+</html>
