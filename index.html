@@ -145,70 +145,92 @@
         }
         #english-note-input[placeholder]:empty:before { content: attr(placeholder); color: #9ca3af; pointer-events: none; display: block; }
 
-        /* --- Roulette Widget --- */
+        /* --- Roulette Widget (전체화면 모드) --- */
         #widget-roulette {
             background: #1a1a2e;
             color: #eee;
-            min-width: 820px;
-            min-height: 580px;
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            min-width: unset;
+            min-height: unset;
+            border-radius: 0;
+            z-index: 2000 !important;
+            resize: none;
+            overflow: hidden;
         }
-        #widget-roulette .widget-header { background-color: #16213e; border-bottom: 1px solid #0f3460; color: #666; }
-        #widget-roulette .close-btn { color: #888; }
+        #widget-roulette .widget-header { display: none; }
+        #widget-roulette .close-btn { color: #888; top: 18px; right: 24px; font-size: 1.6rem; z-index: 2100; }
         #widget-roulette .close-btn:hover { color: #f0a500; }
-        #widget-roulette .widget-content { flex-direction: row; align-items: flex-start; gap: 30px; padding: 20px 30px; }
-        
+        #widget-roulette .widget-content {
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            gap: 50px;
+            padding: 30px 60px;
+            height: 100vh;
+            overflow: hidden;
+        }
+
         .roulette-title {
-            font-size: 1.8rem; margin-bottom: 15px; color: #f0a500; text-shadow: 0 0 10px rgba(240,165,0,0.5);
+            font-size: 2rem; margin-bottom: 20px; color: #f0a500; text-shadow: 0 0 10px rgba(240,165,0,0.5);
             width: 100%; text-align: center; font-weight: bold;
         }
 
-        .roulette-wheel-area { display: flex; flex-direction: column; align-items: center; gap: 12px; flex: 1; }
-        .roulette-wheel-wrapper { position: relative; width: 400px; height: 400px; }
-        canvas#roulette-wheel { border-radius: 50%; box-shadow: 0 0 30px rgba(0,0,0,0.6); width: 100%; height: 100%; }
+        .roulette-wheel-area { display: flex; flex-direction: column; align-items: center; gap: 16px; flex: 1; }
+        .roulette-wheel-wrapper {
+            position: relative;
+            width: min(62vh, 52vw);
+            height: min(62vh, 52vw);
+        }
+        canvas#roulette-wheel { border-radius: 50%; box-shadow: 0 0 40px rgba(0,0,0,0.7); width: 100%; height: 100%; }
         .roulette-pointer {
-            position: absolute; right: -18px; top: 50%; transform: translateY(-50%); width: 0; height: 0;
-            border-top: 18px solid transparent; border-bottom: 18px solid transparent; border-right: 36px solid #f0a500;
-            filter: drop-shadow(0 0 6px #f0a500); z-index: 10;
+            position: absolute; right: -24px; top: 50%; transform: translateY(-50%); width: 0; height: 0;
+            border-top: 22px solid transparent; border-bottom: 22px solid transparent; border-right: 44px solid #f0a500;
+            filter: drop-shadow(0 0 8px #f0a500); z-index: 10;
         }
 
         #roulette-spinBtn {
-            padding: 12px 35px; font-size: 1.1rem; font-weight: bold; border: none; border-radius: 50px;
+            padding: 14px 45px; font-size: 1.2rem; font-weight: bold; border: none; border-radius: 50px;
             background: linear-gradient(135deg, #f0a500, #e05c00); color: white; cursor: pointer;
-            transition: transform 0.1s, box-shadow 0.1s; box-shadow: 0 4px 15px rgba(240,165,0,0.4); margin-top: 5px;
+            transition: transform 0.1s, box-shadow 0.1s; box-shadow: 0 4px 15px rgba(240,165,0,0.4); margin-top: 8px;
         }
         #roulette-spinBtn:hover:not(:disabled) { transform: scale(1.05); box-shadow: 0 6px 20px rgba(240,165,0,0.6); }
         #roulette-spinBtn:disabled { opacity: 0.5; cursor: not-allowed; }
 
         /* 다중 뽑기 영역 스타일 */
         .multi-pick-container {
-            display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.2); 
-            padding: 10px 20px; border-radius: 50px; margin-top: 5px; border: 1px solid #333;
+            display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.2);
+            padding: 12px 24px; border-radius: 50px; margin-top: 5px; border: 1px solid #333;
         }
         .multi-pick-input {
-            width: 60px; padding: 8px; border-radius: 8px; border: 1px solid #555; background: #0f3460;
+            width: 65px; padding: 9px; border-radius: 8px; border: 1px solid #555; background: #0f3460;
             color: white; text-align: center; font-size: 1.1rem; font-weight: bold; outline: none;
         }
         .multi-pick-input:focus { border-color: #3498db; }
         .multi-pick-btn {
-            padding: 10px 20px; font-size: 1rem; font-weight: bold; border: none; border-radius: 50px;
+            padding: 11px 22px; font-size: 1rem; font-weight: bold; border: none; border-radius: 50px;
             background: linear-gradient(135deg, #3498db, #2980b9); color: white; cursor: pointer;
             transition: transform 0.1s, box-shadow 0.1s; box-shadow: 0 4px 15px rgba(52, 152, 219, 0.4);
         }
         .multi-pick-btn:hover:not(:disabled) { transform: scale(1.05); box-shadow: 0 6px 20px rgba(52, 152, 219, 0.6); }
         .multi-pick-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        #roulette-countBadge { font-size: 0.95rem; color: #aaa; margin-top: 5px; }
-        #roulette-countBadge span { color: #f0a500; font-weight: bold; font-size: 1.1rem; }
-        #roulette-emptyMsg { display: none; color: #f0a500; font-size: 1rem; text-align: center; margin-top: 5px;}
+        #roulette-countBadge { font-size: 1rem; color: #aaa; margin-top: 5px; }
+        #roulette-countBadge span { color: #f0a500; font-weight: bold; font-size: 1.15rem; }
+        #roulette-emptyMsg { display: none; color: #f0a500; font-size: 1.1rem; text-align: center; margin-top: 5px;}
 
         .roulette-panel {
-            background: #16213e; border-radius: 16px; padding: 20px; width: 260px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.4); display: flex; flex-direction: column; gap: 12px;
-            font-family: 'Segoe UI', sans-serif;
+            background: #16213e; border-radius: 16px; padding: 24px; width: 310px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4); display: flex; flex-direction: column; gap: 14px;
+            font-family: 'Segoe UI', sans-serif; flex-shrink: 0;
+            max-height: 90vh; overflow-y: auto;
         }
         .roulette-panel h2 { font-size: 1rem; color: #f0a500; font-weight: bold; margin: 0; }
         textarea#roulette-names {
-            width: 100%; height: 220px; background: #0f3460; border: 1px solid #444; border-radius: 8px;
+            width: 100%; height: 280px; background: #0f3460; border: 1px solid #444; border-radius: 8px;
             color: #eee; padding: 10px; font-size: 0.9rem; resize: vertical; outline: none; line-height: 1.5;
         }
         textarea#roulette-names:focus { border-color: #f0a500; }
@@ -217,12 +239,12 @@
         .roulette-toggle-row input[type="checkbox"] { width: 16px; height: 16px; accent-color: #f0a500; cursor: pointer; }
 
         .roulette-btn-row { display: flex; gap: 8px; }
-        .roulette-panel button { flex: 1; padding: 8px; border: none; border-radius: 8px; cursor: pointer; font-size: 0.85rem; font-weight: bold; transition: opacity 0.2s; }
+        .roulette-panel button { flex: 1; padding: 9px; border: none; border-radius: 8px; cursor: pointer; font-size: 0.9rem; font-weight: bold; transition: opacity 0.2s; }
         .roulette-btn-apply  { background: #f0a500; color: #111; }
         .roulette-btn-clear  { background: #555; color: #eee; }
         .roulette-panel button:hover { opacity: 0.85; }
 
-        #roulette-resultList { max-height: 120px; overflow-y: auto; font-size: 0.85rem; padding-left: 0; margin: 0; }
+        #roulette-resultList { max-height: 150px; overflow-y: auto; font-size: 0.85rem; padding-left: 0; margin: 0; }
         #roulette-resultList li { padding: 4px 6px; border-bottom: 1px solid #2a2a4a; list-style: none; color: #eee; }
 
         /* 룰렛 모달 */
@@ -408,7 +430,7 @@
         <div class="widget-content" style="padding-top: 0;">
             <div class="roulette-wheel-area">
                 <div class="roulette-wheel-wrapper">
-                    <canvas id="roulette-wheel" width="400" height="400"></canvas>
+                    <canvas id="roulette-wheel" width="600" height="600"></canvas>
                     <div class="roulette-pointer"></div>
                 </div>
                 <p id="roulette-countBadge">남은 항목: <span id="roulette-countNum">0</span>개</p>
@@ -870,19 +892,4 @@
             timerInput.addEventListener('keypress', function(e) { if (e.key === 'Enter') this.blur(); });
 
             const noteInput = document.getElementById('english-note-input');
-            noteInput.addEventListener('keydown', function(e) {
-                if (e.key === ' ') { e.preventDefault(); document.execCommand('insertText', false, '\u00A0\u200B'); }
-            });
-
-            RouletteApp.init();
-            
-            // 초기 실행 시 켜둘 위젯 설정
-            toggleWidget('widget-clock', 'btn-clock'); 
-            toggleWidget('widget-note', 'btn-note');
-            // 룰렛 위젯도 처음에 열어두려면 아래 주석을 해제하세요.
-            // toggleWidget('widget-roulette', 'btn-roulette');
-        };
-
-    </script>
-</body>
-</html>
+            noteInpu
