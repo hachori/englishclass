@@ -892,4 +892,19 @@
             timerInput.addEventListener('keypress', function(e) { if (e.key === 'Enter') this.blur(); });
 
             const noteInput = document.getElementById('english-note-input');
-            noteInpu
+            noteInput.addEventListener('keydown', function(e) {
+                if (e.key === ' ') { e.preventDefault(); document.execCommand('insertText', false, '\u00A0\u200B'); }
+            });
+
+            RouletteApp.init();
+            
+            // 초기 실행 시 켜둘 위젯 설정
+            toggleWidget('widget-clock', 'btn-clock'); 
+            toggleWidget('widget-note', 'btn-note');
+            // 룰렛 위젯도 처음에 열어두려면 아래 주석을 해제하세요.
+            // toggleWidget('widget-roulette', 'btn-roulette');
+        };
+
+    </script>
+</body>
+</html>
