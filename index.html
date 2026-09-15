@@ -223,14 +223,14 @@
         #roulette-emptyMsg { display: none; color: #f0a500; font-size: 1.1rem; text-align: center; margin-top: 5px;}
 
         .roulette-panel {
-            background: #16213e; border-radius: 16px; padding: 24px; width: 310px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.4); display: flex; flex-direction: column; gap: 14px;
+            background: #16213e; border-radius: 16px; padding: 22px; width: 340px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4); display: flex; flex-direction: column; gap: 16px;
             font-family: 'Segoe UI', sans-serif; flex-shrink: 0;
             max-height: 90vh; overflow-y: auto;
         }
         .roulette-panel h2 { font-size: 1rem; color: #f0a500; font-weight: bold; margin: 0; }
         textarea#roulette-names {
-            width: 100%; height: 280px; background: #0f3460; border: 1px solid #444; border-radius: 8px;
+            width: 100%; height: 150px; background: #0f3460; border: 1px solid #444; border-radius: 8px;
             color: #eee; padding: 10px; font-size: 0.9rem; resize: vertical; outline: none; line-height: 1.5;
         }
         textarea#roulette-names:focus { border-color: #f0a500; }
@@ -280,6 +280,57 @@
         .roulette-btn-remove { background: #f0a500; color: #111; }
         .roulette-modal-box button:hover { opacity: 0.85; }
 
+
+        /* 명단 불러오기 / 역할 배정 패널 */
+        .roulette-section { display: flex; flex-direction: column; gap: 10px; padding-bottom: 14px; border-bottom: 1px solid #22284a; }
+        .roulette-section:last-child { border-bottom: none; padding-bottom: 0; }
+        .roulette-source-row { display: flex; gap: 8px; }
+        .roulette-select {
+            flex: 1; min-width: 0; padding: 8px; border-radius: 8px; border: 1px solid #444;
+            background: #0f3460; color: #eee; font-size: 0.9rem; outline: none; cursor: pointer;
+        }
+        .roulette-select:focus { border-color: #f0a500; }
+        .roulette-select.sm { font-size: 0.8rem; padding: 6px 8px; flex: 0 1 auto; }
+        .roulette-btn-load { flex: 0 0 auto; background: #2ecc71; color: #073b1c; padding: 8px 14px !important; }
+        .roulette-opt-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .roulette-status { font-size: 0.75rem; color: #8b90b5; margin: 0; line-height: 1.45; word-break: keep-all; }
+        .roulette-status.ok   { color: #2ecc71; }
+        .roulette-status.err  { color: #e74c3c; }
+        .roulette-hint { font-size: 0.75rem; color: #8b90b5; margin: 0; }
+        .roulette-hint b { color: #f0a500; }
+
+        .role-box { display: flex; flex-direction: column; gap: 10px; }
+        textarea#roulette-roles {
+            width: 100%; height: 110px; background: #0f3460; border: 1px solid #444; border-radius: 8px;
+            color: #eee; padding: 10px; font-size: 0.9rem; resize: vertical; outline: none; line-height: 1.5;
+        }
+        textarea#roulette-roles:focus { border-color: #f0a500; }
+        .roulette-preset-row { display: flex; gap: 6px; align-items: center; }
+        .roulette-btn-mini { flex: 0 0 auto !important; background: #2a2f52; color: #eee; padding: 7px 10px !important; font-size: 0.85rem !important; }
+
+        /* 역할 배정 결과 (역할 → 당첨자) */
+        #roulette-winnerText.pairs { flex-direction: column; align-items: stretch; gap: 12px; font-size: 1rem; }
+        .role-pair {
+            display: flex; align-items: center; justify-content: space-between; gap: 16px;
+            background: rgba(255,255,255,0.04); border: 1px solid #2a2a4a; border-radius: 14px;
+            padding: 8px 16px; animation: tagPop 0.3s ease-out backwards;
+        }
+        .role-name { font-size: 1.15rem; color: #ccc; font-weight: 700; text-align: left; white-space: nowrap; }
+        .role-arrow { color: #666; font-size: 1.1rem; flex: 1; text-align: center; }
+        .role-pair .winner-tag, .role-pair .dummy-tag { font-size: 1.5rem; padding: 4px 16px; }
+        .role-pair .dummy-tag { animation: none; }
+
+        /* 태블릿 세로 화면 대응 */
+        @media (max-aspect-ratio: 4/5) {
+            #widget-roulette .widget-content {
+                flex-direction: column; justify-content: flex-start;
+                gap: 20px; padding: 16px; overflow-y: auto;
+            }
+            .roulette-title { font-size: 1.5rem; margin-bottom: 8px; }
+            .roulette-wheel-wrapper { width: min(78vw, 46vh); height: min(78vw, 46vh); }
+            .roulette-panel { width: 100%; max-width: 460px; max-height: none; }
+            .roulette-wheel-area { flex: 0 0 auto; }
+        }
 
         /* --- E-book Popup --- */
         .ebook-popup {
@@ -447,25 +498,81 @@
             </div>
 
             <div class="roulette-panel">
-                <h2>📋 항목 입력 (한 줄에 하나)</h2>
-                <textarea id="roulette-names">박시우
-최하임
-김단
-이원우
-손하라
-김소리
-심예성
-서주환</textarea>
-                <label class="roulette-toggle-row">
-                    <input type="checkbox" id="roulette-removeToggle" checked />
-                    당첨 후 명단 제외
-                </label>
-                <div class="roulette-btn-row">
-                    <button class="roulette-btn-apply" onclick="RouletteApp.applyNames()">적용</button>
-                    <button class="roulette-btn-clear" onclick="RouletteApp.clearAll()">초기화</button>
+                <div class="roulette-section">
+                    <h2>🪑 자리배치 명단 불러오기</h2>
+                    <div class="roulette-source-row">
+                        <select id="roulette-classSelect" class="roulette-select">
+                            <option value="">— 반 선택 —</option>
+                            <option value="3-3-영어">3-3-영어</option>
+                            <option value="3-4-영어">3-4-영어</option>
+                            <option value="4-1-영어">4-1-영어</option>
+                            <option value="4-2-영어">4-2-영어</option>
+                            <option value="4-3-영어">4-3-영어</option>
+                            <option value="5-1-과학">5-1-과학</option>
+                            <option value="5-2-과학">5-2-과학</option>
+                            <option value="5-3-과학">5-3-과학</option>
+                            <option value="6-1-과학">6-1-과학</option>
+                            <option value="6-2-과학">6-2-과학</option>
+                            <option value="6-3-과학">6-3-과학</option>
+                        </select>
+                        <button class="roulette-btn-load" onclick="RouletteApp.loadClass()">불러오기</button>
+                    </div>
+                    <div class="roulette-opt-row">
+                        <select id="roulette-genderFilter" class="roulette-select sm" onchange="RouletteApp.save()">
+                            <option value="all">전체</option>
+                            <option value="male">남학생만</option>
+                            <option value="female">여학생만</option>
+                        </select>
+                        <label class="roulette-toggle-row">
+                            <input type="checkbox" id="roulette-stripNum" checked onchange="RouletteApp.save()" />
+                            번호 빼고 이름만
+                        </label>
+                    </div>
+                    <p id="roulette-loadStatus" class="roulette-status">자리배치 앱(seat/v2)에 저장된 반 명단을 그대로 불러옵니다. 여기서 고쳐도 자리배치엔 반영되지 않아요.</p>
                 </div>
-                <h2>🏆 결과 기록</h2>
-                <ul id="roulette-resultList"></ul>
+
+                <div class="roulette-section">
+                    <h2>📋 항목 입력 (한 줄에 하나)</h2>
+                    <textarea id="roulette-names">1모둠
+2모둠
+3모둠
+4모둠
+5모둠
+6모둠</textarea>
+                    <label class="roulette-toggle-row">
+                        <input type="checkbox" id="roulette-removeToggle" checked />
+                        당첨 후 명단 제외
+                    </label>
+                    <div class="roulette-btn-row">
+                        <button class="roulette-btn-apply" onclick="RouletteApp.applyNames()">적용</button>
+                        <button class="roulette-btn-clear" onclick="RouletteApp.clearAll()">초기화</button>
+                    </div>
+                </div>
+
+                <div class="roulette-section">
+                    <h2>
+                        <label class="roulette-toggle-row" style="margin:0; font-size:1rem; color:#f0a500; font-weight:bold;">
+                            <input type="checkbox" id="roulette-roleToggle" onchange="RouletteApp.onRoleToggle()" />
+                            🎭 역할 배정 모드
+                        </label>
+                    </h2>
+                    <div id="roulette-roleBox" class="role-box" style="display:none;">
+                        <textarea id="roulette-roles" placeholder="왕&#10;신하 x3&#10;농부"></textarea>
+                        <p class="roulette-hint">역할 이름 뒤에 <b>x3</b>을 붙이면 같은 역할 3명. 역할 개수만큼 자동으로 뽑습니다.</p>
+                        <div class="roulette-preset-row">
+                            <select id="roulette-presetSelect" class="roulette-select sm" onchange="RouletteApp.loadPreset()">
+                                <option value="">— 저장된 역할 세트 —</option>
+                            </select>
+                            <button class="roulette-btn-mini" onclick="RouletteApp.savePreset()" title="지금 역할을 세트로 저장">💾</button>
+                            <button class="roulette-btn-mini" onclick="RouletteApp.deletePreset()" title="선택한 세트 삭제">🗑</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="roulette-section">
+                    <h2>🏆 결과 기록</h2>
+                    <ul id="roulette-resultList"></ul>
+                </div>
             </div>
         </div>
     </div>
@@ -549,7 +656,7 @@
 
         function toggleWidget(widgetId, btnId) {
             const widget = document.getElementById(widgetId); const btn = document.getElementById(btnId);
-            if (widget.style.display === "none" || widget.style.display === "") { widget.style.display = "flex"; if(btn) btn.classList.add('active'); document.querySelectorAll('.widget').forEach(w => w.style.zIndex = 10); widget.style.zIndex = 100; } 
+            if (widget.style.display === "none" || widget.style.display === "") { widget.style.display = "flex"; if(btn) btn.classList.add('active'); document.querySelectorAll('.widget').forEach(w => w.style.zIndex = 10); widget.style.zIndex = 100; if (widgetId === 'widget-roulette' && typeof RouletteApp !== 'undefined') requestAnimationFrame(() => RouletteApp.resizeCanvas()); } 
             else { widget.style.display = "none"; if(btn) btn.classList.remove('active'); }
         }
 
@@ -591,100 +698,345 @@
         // ==========================================
         const RouletteApp = {
             COLORS: ['#e74c3c','#3498db','#2ecc71','#f39c12','#9b59b6','#1abc9c','#e67e22','#34495e','#e91e63','#00bcd4','#8bc34a','#ff5722'],
-            canvas: null, ctx: null, cx: 0, cy: 0, radius: 0,
-            segments: [], currentAngle: 0, spinning: false, pickingMultiple: false,
-            lastWinnerIndices: [], 
+
+            /* 자리배치 앱(seat/v2)과 공유하는 값들 — 그쪽 코드와 반드시 같아야 한다 */
+            SEAT: {
+                PROJECT:    'classroom-seats-8dfbf',
+                API_KEY:    'AIzaSyCkWzg1dDmjtos3gTKqmiOLOrx0-F6seFI',
+                COLLECTION: 'classes',
+                LS_LIST:    'classroom_seats_class_',   // 오리진이 같아 localStorage를 그대로 읽는다
+                NUM_SPLIT:  51,                          // 이 번호부터 '높은 번호대'
+                TIMEOUT:    2500                         // 교실 네트워크가 느릴 때 기다리는 한계
+            },
+            LS_KEY:     'englishclass_roulette_v2',
+            LS_PRESETS: 'englishclass_roulette_rolepresets',
+
+            canvas: null, ctx: null, size: 600, cx: 300, cy: 300, radius: 290,
+            segments: [],            // [{ id, label, color }] — 인덱스가 아니라 id로 식별한다
+            seq: 0,                  // id 발급기
+            currentAngle: 0, spinning: false, pickingMultiple: false,
+            lastWinners: [],         // [{ id, label, role|null }]
             idleRaf: null, IDLE_SPEED: 0.003,
             audioCtx: null, lastTickIdx: -1,
+            presets: {},
 
             init: function() {
                 this.canvas = document.getElementById('roulette-wheel');
                 this.ctx = this.canvas.getContext('2d');
-                this.cx = this.canvas.width / 2; this.cy = this.canvas.height / 2; this.radius = this.cx - 10;
-                this.applyNames();
-                document.getElementById('roulette-removeToggle').addEventListener('change', () => this.updateUI());
+
+                this.restore();
+                this.refreshPresets();
+                this.onRoleToggle(true);
+                this.applyNames({ silent: true });
+                this.resizeCanvas();
+
+                document.getElementById('roulette-removeToggle').addEventListener('change', () => { this.updateUI(); this.save(); });
+                ['roulette-names', 'roulette-roles'].forEach(id => {
+                    document.getElementById(id).addEventListener('input', () => this.saveSoon());
+                });
+                document.getElementById('roulette-classSelect').addEventListener('change', () => this.save());
+
                 document.addEventListener('keydown', e => {
                     const widget = document.getElementById('widget-roulette');
-                    if (e.ctrlKey && e.key === 'Enter' && widget.style.display !== 'none') this.spin();
+                    if (widget.style.display === 'none' || widget.style.display === '') return;
+                    if (e.ctrlKey && e.key === 'Enter') this.spin();
+                    if (e.key === 'Escape' && document.getElementById('roulette-modal').classList.contains('show')
+                        && !this.pickingMultiple) this.closeModal(false);
                 });
+
+                let rt = null;
+                window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => this.resizeCanvas(), 150); });
             },
 
-            // 일반 돌리기 시 틱 효과음
-            playTick: function() {
-                if (!this.audioCtx) return;
-                const osc = this.audioCtx.createOscillator(), gainNode = this.audioCtx.createGain();
-                osc.connect(gainNode); gainNode.connect(this.audioCtx.destination);
-                osc.type = 'sine'; osc.frequency.setValueAtTime(800, this.audioCtx.currentTime);
-                gainNode.gain.setValueAtTime(0.05, this.audioCtx.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.001, this.audioCtx.currentTime + 0.05);
-                osc.start(); osc.stop(this.audioCtx.currentTime + 0.05);
+            /* ───────── 작은 도구들 ───────── */
+
+            esc: function(s) {
+                return String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
             },
 
-            // 탐색(스캐닝) 중 긴장감 넘치는 효과음 (오락실 스캐닝 사운드)
-            playSuspenseTick: function() {
-                if (!this.audioCtx) return;
-                const osc = this.audioCtx.createOscillator(), gainNode = this.audioCtx.createGain();
-                osc.connect(gainNode); gainNode.connect(this.audioCtx.destination);
-                osc.type = 'square'; 
-                // 랜덤 피치로 오락실 삐빅거리는 소리 연출
-                osc.frequency.setValueAtTime(300 + Math.random() * 400, this.audioCtx.currentTime); 
-                gainNode.gain.setValueAtTime(0.02, this.audioCtx.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.001, this.audioCtx.currentTime + 0.05);
-                osc.start(); osc.stop(this.audioCtx.currentTime + 0.05);
+            shuffle: function(arr) {
+                const a = [...arr];
+                for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+                return a;
             },
 
-            // 당첨 빰빠밤 효과음
-            playTada: function() {
-                if (!this.audioCtx) return;
-                const notes = [{ f: 523.25, d: 0 }, { f: 659.25, d: 0.1 }, { f: 783.99, d: 0.2 }, { f: 1046.50, d: 0.3 }];
-                notes.forEach(note => {
-                    const osc = this.audioCtx.createOscillator(), gainNode = this.audioCtx.createGain();
-                    osc.connect(gainNode); gainNode.connect(this.audioCtx.destination);
-                    osc.type = 'triangle'; osc.frequency.value = note.f;
-                    const startTime = this.audioCtx.currentTime + note.d;
-                    gainNode.gain.setValueAtTime(0, this.audioCtx.currentTime);
-                    gainNode.gain.setValueAtTime(0.15, startTime);
-                    gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + 1.0);
-                    osc.start(startTime); osc.stop(startTime + 1.0);
+            /* 12명을 넘어가면 팔레트가 돌아 옆칸끼리 같은 색이 된다 — 그때는 색상환을 고르게 나눈다 */
+            colorFor: function(i, total) {
+                if (total <= this.COLORS.length) return this.COLORS[i % this.COLORS.length];
+                return `hsl(${Math.round(360 / total * i)}, 65%, ${i % 2 ? 44 : 54}%)`;
+            },
+
+            isBusy: function() { return this.spinning || this.pickingMultiple; },
+
+            /* 돌아가는 중에 명단을 갈아끼우면 엉뚱한 사람이 뽑히거나 빠진다 */
+            guardBusy: function() {
+                if (!this.isBusy()) return false;
+                alert('뽑기가 끝난 뒤에 바꿔 주세요.');
+                return true;
+            },
+
+            /* ───────── 저장 / 복원 ───────── */
+
+            save: function() {
+                try {
+                    localStorage.setItem(this.LS_KEY, JSON.stringify({
+                        names:  document.getElementById('roulette-names').value,
+                        roles:  document.getElementById('roulette-roles').value,
+                        cls:    document.getElementById('roulette-classSelect').value,
+                        gender: document.getElementById('roulette-genderFilter').value,
+                        strip:  document.getElementById('roulette-stripNum').checked,
+                        role:   document.getElementById('roulette-roleToggle').checked,
+                        remove: document.getElementById('roulette-removeToggle').checked,
+                        count:  document.getElementById('multi-pick-count').value
+                    }));
+                } catch (e) { /* 사생활 보호 모드 등 — 저장 못 해도 동작엔 지장 없다 */ }
+            },
+
+            saveSoon: function() { clearTimeout(this._saveTimer); this._saveTimer = setTimeout(() => this.save(), 400); },
+
+            restore: function() {
+                let s = null;
+                try { s = JSON.parse(localStorage.getItem(this.LS_KEY) || 'null'); } catch (e) { s = null; }
+                if (!s) return;
+                const set = (id, val, prop) => {
+                    const el = document.getElementById(id);
+                    if (el && val !== undefined && val !== null) el[prop || 'value'] = val;
+                };
+                set('roulette-names', s.names);
+                set('roulette-roles', s.roles);
+                set('roulette-classSelect', s.cls);
+                set('roulette-genderFilter', s.gender);
+                set('multi-pick-count', s.count);
+                set('roulette-stripNum', s.strip, 'checked');
+                set('roulette-roleToggle', s.role, 'checked');
+                set('roulette-removeToggle', s.remove, 'checked');
+            },
+
+            /* ───────── 자리배치 명단 불러오기 ───────── */
+
+            gradeOf:   function(cls) { const m = String(cls).match(/^(\d)/); return m ? parseInt(m[1], 10) : null; },
+            lowGender: function(cls) { const g = this.gradeOf(cls); return (g === 3 || g === 5) ? 'female' : 'male'; },
+
+            /* 자리배치 앱과 같은 규칙 — 번호대로 성별을 가른다 */
+            genderOf: function(s, cls) {
+                const m = String(s).match(/\d+/);
+                if (!m) return null;
+                const low = this.lowGender(cls), high = low === 'female' ? 'male' : 'female';
+                return parseInt(m[0], 10) >= this.SEAT.NUM_SPLIT ? high : low;
+            },
+
+            setStatus: function(msg, kind) {
+                const el = document.getElementById('roulette-loadStatus');
+                el.textContent = msg;
+                el.className = 'roulette-status' + (kind ? ' ' + kind : '');
+            },
+
+            /* Firestore REST — SDK(300KB)를 받지 않고 fetch 한 번으로 끝낸다 */
+            fetchFromCloud: async function(cls) {
+                const url = `https://firestore.googleapis.com/v1/projects/${this.SEAT.PROJECT}`
+                          + `/databases/(default)/documents/${this.SEAT.COLLECTION}/${encodeURIComponent(cls)}`
+                          + `?key=${this.SEAT.API_KEY}`;
+                const ctrl = new AbortController();
+                const timer = setTimeout(() => ctrl.abort(), this.SEAT.TIMEOUT);
+                try {
+                    const res = await fetch(url, { signal: ctrl.signal });
+                    if (!res.ok) throw new Error('HTTP ' + res.status);
+                    const data = await res.json();
+                    const v = data.fields && data.fields.studentList && data.fields.studentList.stringValue;
+                    if (!v) throw new Error('studentList 없음');
+                    try { localStorage.setItem(this.SEAT.LS_LIST + cls, v); } catch (e) {}
+                    return v;
+                } finally { clearTimeout(timer); }
+            },
+
+            loadClass: async function() {
+                if (this.guardBusy()) return;
+                const cls = document.getElementById('roulette-classSelect').value;
+                if (!cls) { this.setStatus('먼저 반을 골라 주세요.', 'err'); return; }
+
+                this.setStatus('📡 불러오는 중...');
+                let raw = null, via = '';
+                try {
+                    raw = await this.fetchFromCloud(cls);
+                    via = '클라우드';
+                } catch (e) {
+                    // 오프라인이거나 느릴 때 — 자리배치 앱이 이 기기에 남겨 둔 사본을 쓴다
+                    raw = localStorage.getItem(this.SEAT.LS_LIST + cls);
+                    via = '이 기기의 사본';
+                }
+                if (!raw) { this.setStatus(`❌ ${cls} 명단을 찾지 못했어요. 자리배치 앱에서 먼저 저장해 주세요.`, 'err'); return; }
+
+                let names = String(raw).split(/[,\n]/).map(s => s.trim()).filter(Boolean);
+                const total = names.length;
+
+                const gender = document.getElementById('roulette-genderFilter').value;
+                if (gender !== 'all') names = names.filter(n => this.genderOf(n, cls) === gender);
+                if (document.getElementById('roulette-stripNum').checked) {
+                    names = names.map(n => n.replace(/^\s*\d+\s*/, '').trim()).filter(Boolean);
+                }
+
+                if (names.length < 2) {
+                    this.setStatus(`❌ 조건에 맞는 사람이 ${names.length}명뿐이에요. (전체 ${total}명)`, 'err');
+                    return;
+                }
+
+                document.getElementById('roulette-names').value = names.join('\n');
+                const filterLabel = gender === 'all' ? '' : (gender === 'male' ? ' · 남학생만' : ' · 여학생만');
+                this.setStatus(`✅ ${cls} ${names.length}명 불러옴${filterLabel} (${via})`, 'ok');
+                this.applyNames();
+            },
+
+            /* ───────── 명단 적용 ───────── */
+
+            applyNames: function(opts) {
+                if (this.guardBusy()) return;
+                const silent = opts && opts.silent;
+                const raw = document.getElementById('roulette-names').value.split('\n').map(s => s.trim()).filter(Boolean);
+                if (raw.length < 2) {
+                    if (!silent) alert('항목을 최소 2개 이상 입력하세요.');
+                    return;
+                }
+                this.segments = raw.map((label, i) => ({ id: ++this.seq, label, color: this.colorFor(i, raw.length) }));
+                this.currentAngle = 0;
+                document.getElementById('roulette-resultList').innerHTML = '';
+                this.updateUI(); this.resizeCanvas(); this.startIdle(); this.save();
+            },
+
+            clearAll: function() {
+                if (this.guardBusy()) return;
+                this.segments = []; this.currentAngle = 0; this.lastWinners = [];
+                document.getElementById('roulette-names').value = '';
+                document.getElementById('roulette-resultList').innerHTML = '';
+                this.stopIdle(); this.ctx.clearRect(0, 0, this.size, this.size);
+                this.updateUI(); this.save();
+            },
+
+            /* ───────── 역할 ───────── */
+
+            onRoleToggle: function(quiet) {
+                const on = document.getElementById('roulette-roleToggle').checked;
+                document.getElementById('roulette-roleBox').style.display = on ? 'flex' : 'none';
+                document.getElementById('multi-pick-count').disabled = on;
+                document.querySelector('.multi-pick-btn').textContent = on ? '역할 배정하기 🎭' : '한 번에 뽑기 👥';
+                this.updateUI();
+                if (!quiet) this.save();
+            },
+
+            /* "신하 x3" → ['신하','신하','신하'] */
+            parseRoles: function() {
+                const out = [];
+                document.getElementById('roulette-roles').value.split('\n').forEach(line => {
+                    const t = line.trim();
+                    if (!t) return;
+                    const m = t.match(/^(.*?)\s*[x×*]\s*(\d+)$/i);
+                    const label = (m ? m[1] : t).trim();
+                    if (!label) return;
+                    const n = m ? Math.min(99, Math.max(1, parseInt(m[2], 10))) : 1;
+                    for (let i = 0; i < n; i++) out.push(label);
                 });
+                return out;
             },
+
+            refreshPresets: function() {
+                try { this.presets = JSON.parse(localStorage.getItem(this.LS_PRESETS) || '{}'); } catch (e) { this.presets = {}; }
+                const sel = document.getElementById('roulette-presetSelect');
+                sel.innerHTML = '<option value="">— 저장된 역할 세트 —</option>'
+                    + Object.keys(this.presets).map(n => `<option value="${this.esc(n)}">${this.esc(n)}</option>`).join('');
+            },
+
+            savePreset: function() {
+                const text = document.getElementById('roulette-roles').value.trim();
+                if (!text) { alert('저장할 역할을 먼저 입력하세요.'); return; }
+                const name = (prompt('역할 세트 이름 (예: 3단원 역할극)') || '').trim();
+                if (!name) return;
+                this.presets[name] = text;
+                try { localStorage.setItem(this.LS_PRESETS, JSON.stringify(this.presets)); } catch (e) {}
+                this.refreshPresets();
+                document.getElementById('roulette-presetSelect').value = name;
+            },
+
+            loadPreset: function() {
+                const name = document.getElementById('roulette-presetSelect').value;
+                if (!name || !this.presets[name]) return;
+                document.getElementById('roulette-roles').value = this.presets[name];
+                this.save();
+            },
+
+            deletePreset: function() {
+                const name = document.getElementById('roulette-presetSelect').value;
+                if (!name) { alert('지울 세트를 먼저 고르세요.'); return; }
+                if (!confirm(`'${name}' 세트를 지울까요?`)) return;
+                delete this.presets[name];
+                try { localStorage.setItem(this.LS_PRESETS, JSON.stringify(this.presets)); } catch (e) {}
+                this.refreshPresets();
+            },
+
+            /* ───────── 소리 ───────── */
 
             initAudio: function() {
                 if (!this.audioCtx) this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                 if (this.audioCtx.state === 'suspended') this.audioCtx.resume();
             },
 
-            applyNames: function() {
-                const raw = document.getElementById('roulette-names').value.split('\n').map(s => s.trim()).filter(s => s.length > 0);
-                if (raw.length < 2) { alert('항목을 최소 2개 이상 입력하세요.'); return; }
-                this.segments = raw.map((label, i) => ({ label, color: this.COLORS[i % this.COLORS.length] }));
-                this.currentAngle = 0; document.getElementById('roulette-resultList').innerHTML = '';
-                this.updateUI(); this.startIdle();
+            beep: function(type, freq, gain, dur) {
+                if (!this.audioCtx) return;
+                const osc = this.audioCtx.createOscillator(), g = this.audioCtx.createGain();
+                osc.connect(g); g.connect(this.audioCtx.destination);
+                osc.type = type; osc.frequency.setValueAtTime(freq, this.audioCtx.currentTime);
+                g.gain.setValueAtTime(gain, this.audioCtx.currentTime);
+                g.gain.exponentialRampToValueAtTime(0.001, this.audioCtx.currentTime + dur);
+                osc.start(); osc.stop(this.audioCtx.currentTime + dur);
             },
 
-            clearAll: function() {
-                this.segments = []; this.currentAngle = 0;
-                document.getElementById('roulette-names').value = ''; document.getElementById('roulette-resultList').innerHTML = '';
-                this.stopIdle(); this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-                this.updateUI();
+            playTick:         function() { this.beep('sine', 800, 0.05, 0.05); },
+            playSuspenseTick: function() { this.beep('square', 300 + Math.random() * 400, 0.02, 0.05); },
+            playReveal:       function() { this.beep('triangle', 880, 0.12, 0.25); },
+
+            playTada: function() {
+                if (!this.audioCtx) return;
+                [{ f: 523.25, d: 0 }, { f: 659.25, d: 0.1 }, { f: 783.99, d: 0.2 }, { f: 1046.50, d: 0.3 }].forEach(note => {
+                    const osc = this.audioCtx.createOscillator(), g = this.audioCtx.createGain();
+                    osc.connect(g); g.connect(this.audioCtx.destination);
+                    osc.type = 'triangle'; osc.frequency.value = note.f;
+                    const t0 = this.audioCtx.currentTime + note.d;
+                    g.gain.setValueAtTime(0, this.audioCtx.currentTime);
+                    g.gain.setValueAtTime(0.15, t0);
+                    g.gain.exponentialRampToValueAtTime(0.001, t0 + 1.0);
+                    osc.start(t0); osc.stop(t0 + 1.0);
+                });
             },
+
+            /* ───────── 화면 ───────── */
 
             updateUI: function() {
-                document.getElementById('roulette-countNum').textContent = this.segments.length;
                 const empty = this.segments.length === 0;
-                document.getElementById('roulette-spinBtn').disabled = empty || this.spinning || this.pickingMultiple;
-                document.querySelector('.multi-pick-btn').disabled = empty || this.spinning || this.pickingMultiple;
-                
+                const busy = this.isBusy();
+                document.getElementById('roulette-countNum').textContent = this.segments.length;
+                document.getElementById('roulette-spinBtn').disabled = empty || busy;
+                document.querySelector('.multi-pick-btn').disabled = empty || busy;
                 document.getElementById('roulette-emptyMsg').style.display = empty ? 'block' : 'none';
                 document.getElementById('roulette-countBadge').style.display = empty ? 'none' : 'block';
-                const removeToggle = document.getElementById('roulette-removeToggle').checked;
                 const removeBtn = document.getElementById('roulette-removeBtn');
-                if(removeBtn) removeBtn.style.display = removeToggle ? 'inline-block' : 'none';
+                if (removeBtn) removeBtn.style.display = document.getElementById('roulette-removeToggle').checked ? 'inline-block' : 'none';
+            },
+
+            /* 캔버스를 실제 표시 크기 × 화면 배율로 잡는다 — 교실 대형 TV에서 글자가 뭉개지지 않게 */
+            resizeCanvas: function() {
+                const size = Math.round(this.canvas.getBoundingClientRect().width);
+                if (!size) return;                       // 위젯이 아직 닫혀 있으면 건너뛴다
+                const dpr = window.devicePixelRatio || 1;
+                const px = Math.round(size * dpr);
+                if (this.canvas.width !== px || this.canvas.height !== px) {
+                    this.canvas.width = px; this.canvas.height = px;
+                }
+                this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);   // 이제부터 좌표는 CSS 픽셀 단위
+                this.size = size; this.cx = size / 2; this.cy = size / 2; this.radius = this.cx - 10;
+                this.drawWheel(this.currentAngle);
             },
 
             drawWheel: function(angle) {
                 if (this.segments.length === 0) return;
-                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                this.ctx.clearRect(0, 0, this.size, this.size);
                 const arc = (2 * Math.PI) / this.segments.length;
 
                 this.segments.forEach((seg, i) => {
@@ -693,14 +1045,18 @@
                     this.ctx.fillStyle = seg.color; this.ctx.fill(); this.ctx.strokeStyle = 'rgba(255,255,255,0.25)'; this.ctx.lineWidth = 1.5; this.ctx.stroke();
 
                     this.ctx.save(); this.ctx.translate(this.cx, this.cy); this.ctx.rotate(start + arc / 2);
-                    const maxLen = Math.min(this.radius * 0.72, 160);
-                    const fontSize = Math.max(10, Math.min(18, maxLen / (seg.label.length * 0.65)));
-                    this.ctx.font = `bold ${fontSize}px 'Segoe UI', sans-serif`; this.ctx.fillStyle = '#fff'; this.ctx.textAlign = 'right'; this.ctx.textBaseline = 'middle'; this.ctx.shadowColor = 'rgba(0,0,0,0.6)'; this.ctx.shadowBlur = 4;
-                    let text = seg.label; while (this.ctx.measureText(text).width > maxLen && text.length > 1) { text = text.slice(0, -1); }
+                    const maxLen = Math.min(this.radius * 0.72, 220);
+                    const fontSize = Math.max(11, Math.min(24, maxLen / (seg.label.length * 0.62)));
+                    this.ctx.font = `bold ${fontSize}px 'Noto Sans KR', 'Segoe UI', sans-serif`;
+                    this.ctx.fillStyle = '#fff'; this.ctx.textAlign = 'right'; this.ctx.textBaseline = 'middle';
+                    this.ctx.shadowColor = 'rgba(0,0,0,0.6)'; this.ctx.shadowBlur = 4;
+                    let text = seg.label;
+                    while (this.ctx.measureText(text).width > maxLen && text.length > 1) text = text.slice(0, -1);
                     if (text !== seg.label) text += '…';
                     this.ctx.fillText(text, this.radius - 14, 0); this.ctx.restore();
                 });
-                this.ctx.beginPath(); this.ctx.arc(this.cx, this.cy, 22, 0, 2 * Math.PI); this.ctx.fillStyle = '#fff'; this.ctx.fill(); this.ctx.strokeStyle = '#ccc'; this.ctx.lineWidth = 2; this.ctx.stroke();
+                this.ctx.beginPath(); this.ctx.arc(this.cx, this.cy, 22, 0, 2 * Math.PI);
+                this.ctx.fillStyle = '#fff'; this.ctx.fill(); this.ctx.strokeStyle = '#ccc'; this.ctx.lineWidth = 2; this.ctx.stroke();
             },
 
             startIdle: function() {
@@ -709,15 +1065,23 @@
                     if (this.spinning) { this.idleRaf = null; return; }
                     this.currentAngle += this.IDLE_SPEED; this.drawWheel(this.currentAngle);
                     this.idleRaf = requestAnimationFrame(loop);
-                }
+                };
                 this.idleRaf = requestAnimationFrame(loop);
             },
 
             stopIdle: function() { if (this.idleRaf) { cancelAnimationFrame(this.idleRaf); this.idleRaf = null; } },
 
-            // 1. 단일 뽑기
+            /* 포인터(3시 방향)가 가리키는 칸 */
+            indexAtPointer: function() {
+                const arc = (2 * Math.PI) / this.segments.length;
+                const normalised = ((-this.currentAngle) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
+                return Math.floor(normalised / arc) % this.segments.length;
+            },
+
+            /* ───────── 1. 한 명 돌리기 ───────── */
+
             spin: function() {
-                if (this.spinning || this.pickingMultiple || this.segments.length < 2) return;
+                if (this.isBusy() || this.segments.length < 2) return;
                 this.initAudio();
                 this.spinning = true; this.stopIdle(); this.updateUI();
 
@@ -725,155 +1089,159 @@
                 const duration = 4000 + Math.random() * 1500;
                 const startTime = performance.now();
                 const startAngle = this.currentAngle;
-                const easeOut = (t) => 1 - Math.pow(1 - t, 4);
+                const easeOut = t => 1 - Math.pow(1 - t, 4);
 
-                const frame = (now) => {
-                    const elapsed = now - startTime; const progress = Math.min(elapsed / duration, 1);
+                const frame = now => {
+                    const progress = Math.min((now - startTime) / duration, 1);
                     this.currentAngle = startAngle + totalSpin * easeOut(progress);
                     this.drawWheel(this.currentAngle);
 
-                    const arc = (2 * Math.PI) / this.segments.length;
-                    const normalised = ((-this.currentAngle) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
-                    const currentIdx = Math.floor(normalised / arc) % this.segments.length;
-                    if (this.lastTickIdx !== currentIdx) { this.playTick(); this.lastTickIdx = currentIdx; }
+                    const idx = this.indexAtPointer();
+                    if (this.lastTickIdx !== idx) { this.playTick(); this.lastTickIdx = idx; }
 
-                    if (progress < 1) requestAnimationFrame(frame);
-                    else { this.spinning = false; this.calcSingleWinner(); }
+                    if (progress < 1) { requestAnimationFrame(frame); return; }
+
+                    this.spinning = false;
+                    this.lastTickIdx = -1;
+                    const seg = this.segments[this.indexAtPointer()];
+                    this.lastWinners = [{ id: seg.id, label: seg.label, role: null }];
+                    this.showResultModal();
                 };
                 requestAnimationFrame(frame);
             },
 
-            calcSingleWinner: function() {
-                const arc = (2 * Math.PI) / this.segments.length;
-                const normalised = ((-this.currentAngle) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
-                const winnerIdx = Math.floor(normalised / arc) % this.segments.length;
-                
-                this.lastWinnerIndices = [winnerIdx];
-                
-                // 모달 텍스트 리셋
-                document.querySelector('.roulette-modal-box h2').innerHTML = '🎉 당첨!';
-                document.querySelector('.roulette-modal-btn-row').style.display = 'flex';
-                
-                this.showResultModal();
-            },
+            /* ───────── 2. 여러 명 뽑기 / 역할 배정 ───────── */
 
-            // 2. 다중 뽑기 (긴장감 애니메이션 적용)
             pickMultiple: function() {
-                if (this.segments.length < 1 || this.spinning || this.pickingMultiple) return;
-                
-                let countInput = document.getElementById('multi-pick-count');
-                let count = parseInt(countInput.value) || 1;
-                if (count < 1) count = 1;
-                if (count > this.segments.length) {
-                    count = this.segments.length;
-                    countInput.value = count;
+                if (this.isBusy() || this.segments.length < 1) return;
+
+                const roleMode = document.getElementById('roulette-roleToggle').checked;
+                let roles = [], count;
+
+                if (roleMode) {
+                    roles = this.parseRoles();
+                    if (!roles.length) { alert('역할을 한 줄에 하나씩 입력하세요.\n예)  왕 / 신하 x3 / 농부'); return; }
+                    if (roles.length > this.segments.length) {
+                        if (!confirm(`역할은 ${roles.length}개인데 남은 사람은 ${this.segments.length}명이에요.\n앞에서부터 ${this.segments.length}개 역할만 배정할까요?`)) return;
+                        roles = roles.slice(0, this.segments.length);
+                    }
+                    count = roles.length;
+                } else {
+                    const input = document.getElementById('multi-pick-count');
+                    count = parseInt(input.value) || 1;
+                    if (count < 1) count = 1;
+                    if (count > this.segments.length) { count = this.segments.length; input.value = count; }
                 }
 
                 this.initAudio();
                 this.pickingMultiple = true;
-                this.updateUI(); // 버튼 비활성화
+                this.updateUI();
 
-                // 1) 미리 진짜 당첨자 확정해두기
-                let indices = Array.from(this.segments.keys());
-                for (let i = indices.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [indices[i], indices[j]] = [indices[j], indices[i]];
-                }
-                this.lastWinnerIndices = indices.slice(0, count);
+                // 진짜 결과는 미리 확정해 둔다 — 화면 연출과는 무관하게
+                this.lastWinners = this.shuffle(this.segments).slice(0, count)
+                    .map((seg, i) => ({ id: seg.id, label: seg.label, role: roleMode ? roles[i] : null }));
 
-                // 2) 긴장감 모드 UI 세팅 (모달 바로 띄우기)
-                document.getElementById('roulette-modal').classList.add('show');
-                const titleEl = document.querySelector('.roulette-modal-box h2');
+                this.runSuspense(roleMode);
+            },
+
+            /* 뽑는 중 명단이 바뀌어도 터지지 않도록 라벨을 미리 복사해 둔다 */
+            runSuspense: function(roleMode) {
+                const labels = this.segments.map(s => s.label);
+                const count = this.lastWinners.length;
                 const textEl = document.getElementById('roulette-winnerText');
-                const btnRow = document.querySelector('.roulette-modal-btn-row');
-                
-                titleEl.innerHTML = '🕹️ 타겟을 찾는 중...';
-                btnRow.style.display = 'none';
+
+                document.getElementById('roulette-modal').classList.add('show');
+                document.querySelector('.roulette-modal-btn-row').style.display = 'none';
+                document.querySelector('.roulette-modal-box h2').innerHTML = roleMode ? '🎭 역할을 정하는 중...' : '🕹️ 타겟을 찾는 중...';
+                textEl.className = roleMode ? 'pairs' : '';
 
                 let ticks = 0;
-                const maxTicks = 25; // 2.5초 동안 긴장감 애니메이션 (100ms * 25)
-
-                // 3) 인터벌 애니메이션 시작
-                const suspenseInterval = setInterval(() => {
+                const maxTicks = roleMode ? 12 : 25;   // 역할 모드는 뒤에 순차 공개가 이어진다
+                const iv = setInterval(() => {
                     ticks++;
-                    
-                    // 화면에 보일 가짜(스캐닝용) 명단 섞기
-                    let dummyPool = Array.from(this.segments.keys());
-                    for (let i = dummyPool.length - 1; i > 0; i--) {
-                        const j = Math.floor(Math.random() * (i + 1));
-                        [dummyPool[i], dummyPool[j]] = [dummyPool[j], dummyPool[i]];
-                    }
-                    const dummyIndices = dummyPool.slice(0, count);
-                    
-                    // 회색조의 작은 더미 태그로 화면에 출력
-                    const dummyTags = dummyIndices.map(idx => 
-                        `<span class="dummy-tag">${this.segments[idx].label}</span>`
-                    ).join('');
-                    
-                    textEl.innerHTML = dummyTags;
-                    this.playSuspenseTick(); // 띠딕! 오락실 사운드
+                    const picks = this.shuffle(labels).slice(0, count);
+                    textEl.innerHTML = roleMode
+                        ? this.lastWinners.map((w, i) =>
+                            `<div class="role-pair"><span class="role-name">${this.esc(w.role)}</span>`
+                            + `<span class="role-arrow">→</span><span class="dummy-tag">${this.esc(picks[i] || '???')}</span></div>`).join('')
+                        : picks.map(p => `<span class="dummy-tag">${this.esc(p)}</span>`).join('');
+                    this.playSuspenseTick();
 
-                    // 4) 시간이 다 되면 종료하고 진짜 당첨자 공개
                     if (ticks >= maxTicks) {
-                        clearInterval(suspenseInterval);
-                        this.pickingMultiple = false;
-                        
-                        titleEl.innerHTML = '🎉 당첨!';
-                        btnRow.style.display = 'flex';
-                        
-                        this.showResultModal(); // 진짜 결과 공개
+                        clearInterval(iv);
+                        if (roleMode) { this.revealRolesOneByOne(); }
+                        else { this.pickingMultiple = false; this.showResultModal(); }
                     }
                 }, 100);
             },
 
-            // 결과를 화면에 띄우는 공통 로직
+            /* 역할은 하나씩 공개해야 교실 반응이 산다 */
+            revealRolesOneByOne: function() {
+                const textEl = document.getElementById('roulette-winnerText');
+                let shown = 0;
+                const step = () => {
+                    textEl.innerHTML = this.lastWinners.map((w, i) => {
+                        const right = i < shown
+                            ? `<span class="winner-tag">${this.esc(w.label)}</span>`
+                            : '<span class="dummy-tag">???</span>';
+                        return `<div class="role-pair"><span class="role-name">${this.esc(w.role)}</span>`
+                             + `<span class="role-arrow">→</span>${right}</div>`;
+                    }).join('');
+                    if (shown > 0) this.playReveal();
+                    if (shown >= this.lastWinners.length) {
+                        this.pickingMultiple = false;
+                        this.showResultModal();
+                        return;
+                    }
+                    shown++;
+                    setTimeout(step, 700);
+                };
+                step();
+            },
+
+            /* ───────── 결과 ───────── */
+
             showResultModal: function() {
-                const winners = this.lastWinnerIndices.map(idx => this.segments[idx].label);
-                
-                // 진짜 당첨 태그 (팝! 하고 튀어나오는 애니메이션 포함)
-                const tagsHtml = winners.map((w, index) => 
-                    `<span class="winner-tag" style="animation-delay: ${index * 0.1}s">${w}</span>`
-                ).join('');
-                
-                document.getElementById('roulette-winnerText').innerHTML = tagsHtml;
+                const roleMode = this.lastWinners.some(w => w.role);
+                const textEl = document.getElementById('roulette-winnerText');
+                textEl.className = roleMode ? 'pairs' : '';
+                textEl.innerHTML = roleMode
+                    ? this.lastWinners.map((w, i) =>
+                        `<div class="role-pair" style="animation-delay:${i * 0.08}s"><span class="role-name">${this.esc(w.role)}</span>`
+                        + `<span class="role-arrow">→</span><span class="winner-tag">${this.esc(w.label)}</span></div>`).join('')
+                    : this.lastWinners.map((w, i) =>
+                        `<span class="winner-tag" style="animation-delay:${i * 0.1}s">${this.esc(w.label)}</span>`).join('');
 
-                // 결과 히스토리 기록 (중복 기록 방지를 위해 여기서 한 번만)
+                document.querySelector('.roulette-modal-box h2').innerHTML = '🎉 당첨!';
+                document.querySelector('.roulette-modal-btn-row').style.display = 'flex';
+
+                const list = document.getElementById('roulette-resultList');
                 const li = document.createElement('li');
-                li.textContent = `#${document.getElementById('roulette-resultList').children.length + 1} → [ ${winners.join(', ')} ]`;
-                document.getElementById('roulette-resultList').prepend(li);
-                
+                const body = roleMode
+                    ? this.lastWinners.map(w => `${w.role}: ${w.label}`).join(', ')
+                    : this.lastWinners.map(w => w.label).join(', ');
+                li.textContent = `#${list.children.length + 1} → [ ${body} ]`;
+                list.prepend(li);
+
                 this.playTada();
-
-                const removeBtn = document.getElementById('roulette-removeBtn');
-                removeBtn.style.display = document.getElementById('roulette-removeToggle').checked ? 'inline-block' : 'none';
-
-                // 모달 띄우기 (다중뽑기의 경우 이미 떠있지만, 혹시 몰라 클래스 재보장)
+                this.updateUI();
                 document.getElementById('roulette-modal').classList.add('show');
             },
 
-            // 모달 닫기 및 명단 제외
+            /* 인덱스가 아니라 id로 지운다 — 도중에 명단이 바뀌어도 엉뚱한 사람이 빠지지 않는다 */
             closeModal: function(remove) {
+                if (this.pickingMultiple) return;
                 document.getElementById('roulette-modal').classList.remove('show');
 
-                if (remove && this.lastWinnerIndices.length > 0) {
-                    // 삭제 시 배열 순서가 밀리지 않도록 뒤(인덱스가 큰 값)에서부터 지웁니다.
-                    let sortedIndices = [...this.lastWinnerIndices].sort((a, b) => b - a);
-                    sortedIndices.forEach(idx => {
-                        this.segments.splice(idx, 1);
-                    });
-                    
-                    this.lastWinnerIndices = [];
-                    this.updateUI();
-
-                    if (this.segments.length === 0) {
-                        this.stopIdle();
-                        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-                        return;
-                    }
+                if (remove && this.lastWinners.length) {
+                    const ids = new Set(this.lastWinners.map(w => w.id));
+                    this.segments = this.segments.filter(s => !ids.has(s.id));
+                    this.segments.forEach((s, i) => { s.color = this.colorFor(i, this.segments.length); });
                 }
-
-                this.lastWinnerIndices = [];
+                this.lastWinners = [];
                 this.updateUI();
+
+                if (!this.segments.length) { this.stopIdle(); this.ctx.clearRect(0, 0, this.size, this.size); return; }
                 this.drawWheel(this.currentAngle);
                 this.startIdle();
             }
