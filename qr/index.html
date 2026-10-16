@@ -279,7 +279,7 @@
   .open-btn:hover { background: var(--accent); color: #000; }
 
   /* error */
-  #error-msg {
+  #error-msg, .gen-error {
     width: 100%;
     max-width: 640px;
     margin-top: .75rem;
@@ -292,7 +292,7 @@
     font-size: 12px;
     color: var(--danger);
   }
-  #error-msg.visible { display: block; }
+  #error-msg.visible, .gen-error.visible { display: block; }
 
   /* history */
   #history-wrap {
@@ -404,6 +404,123 @@
     animation: spin .6s linear infinite;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* mode tabs */
+  .tabs {
+    width: 100%;
+    max-width: 640px;
+    display: flex;
+    gap: 4px;
+    padding: 4px;
+    margin-bottom: 1.25rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+  }
+  .tab-btn {
+    flex: 1;
+    padding: .55rem .5rem;
+    background: none;
+    border: none;
+    border-radius: 7px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: background .15s, color .15s;
+  }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active { background: var(--accent-dim); color: var(--accent); }
+
+  .panel { width: 100%; display: flex; flex-direction: column; align-items: center; }
+  .panel[hidden] { display: none; }
+
+  /* generator */
+  .gen-box {
+    width: 100%;
+    max-width: 640px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .gen-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    margin-bottom: .4rem;
+    display: block;
+  }
+  #gen-input {
+    width: 100%;
+    min-height: 90px;
+    resize: vertical;
+    background: var(--surface2);
+    border: 1px solid var(--border-bright);
+    border-radius: 8px;
+    padding: .7rem .8rem;
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--text);
+    user-select: text;
+  }
+  #gen-input:focus { outline: none; border-color: var(--accent); }
+  #gen-input::placeholder { color: var(--text-dim); }
+  .gen-meta {
+    display: flex;
+    justify-content: flex-end;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-dim);
+    margin-top: .3rem;
+  }
+  .gen-opts { display: flex; gap: 10px; flex-wrap: wrap; }
+  .gen-opt { flex: 1; min-width: 140px; }
+  .gen-opt select {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border-bright);
+    border-radius: 8px;
+    padding: .5rem .6rem;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text);
+    cursor: pointer;
+  }
+  .gen-opt select:focus { outline: none; border-color: var(--accent); }
+
+  #gen-output {
+    width: 100%;
+    max-width: 640px;
+    margin-top: 1rem;
+    background: var(--surface);
+    border: 1px solid rgba(0,229,160,.3);
+    border-radius: 10px;
+    overflow: hidden;
+    animation: slide-in .2s ease both;
+  }
+  #gen-output[hidden] { display: none; }
+  .gen-canvas-wrap {
+    padding: 1.25rem;
+    display: flex;
+    justify-content: center;
+    background: var(--surface2);
+  }
+  #gen-canvas {
+    display: block;
+    width: 240px;
+    max-width: 100%;
+    height: auto;
+    border-radius: 6px;
+    image-rendering: pixelated;
+  }
+  #gen-output .result-actions { border-top: 1px solid var(--border); }
 </style>
 </head>
 <body>
@@ -411,8 +528,17 @@
 <header>
   <span class="logo">QR.SCAN</span>
   <span class="logo-sep">/</span>
-  <span class="logo-sub">clipboard · drop · select</span>
+  <span class="logo-sub">scan · make</span>
 </header>
+
+<!-- Mode tabs -->
+<div class="tabs" role="tablist">
+  <button class="tab-btn active" role="tab" data-mode="scan" aria-selected="true">QR 스캔</button>
+  <button class="tab-btn" role="tab" data-mode="make" aria-selected="false">QR 생성</button>
+</div>
+
+<!-- ═══ Scan panel ═══ -->
+<div class="panel" id="panel-scan">
 
 <!-- Drop / Paste Zone -->
 <div id="drop-zone" tabindex="0" role="button" aria-label="QR 이미지 붙여넣기 또는 드래그">
@@ -461,14 +587,57 @@
   <div class="history-list" id="history-list"></div>
 </div>
 
+</div><!-- /panel-scan -->
+
+<!-- ═══ Make panel ═══ -->
+<div class="panel" id="panel-make" hidden>
+  <div class="gen-box">
+    <div>
+      <label class="gen-label" for="gen-input">QR에 담을 내용</label>
+      <textarea id="gen-input" placeholder="링크(https://...)나 텍스트를 입력하세요" spellcheck="false"></textarea>
+      <div class="gen-meta"><span id="gen-count">0자</span></div>
+    </div>
+    <div class="gen-opts">
+      <div class="gen-opt">
+        <label class="gen-label" for="gen-size">크기</label>
+        <select id="gen-size">
+          <option value="256">작게 (256px)</option>
+          <option value="512" selected>보통 (512px)</option>
+          <option value="1024">크게 (1024px · 인쇄용)</option>
+        </select>
+      </div>
+      <div class="gen-opt">
+        <label class="gen-label" for="gen-ecc">오류 복원</label>
+        <select id="gen-ecc">
+          <option value="L">낮음 (L · 촘촘함 ↓)</option>
+          <option value="M" selected>보통 (M)</option>
+          <option value="Q">높음 (Q)</option>
+          <option value="H">최고 (H · 훼손에 강함)</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div id="gen-error" class="gen-error"></div>
+
+  <div id="gen-output" hidden>
+    <div class="gen-canvas-wrap"><canvas id="gen-canvas"></canvas></div>
+    <div class="result-actions">
+      <button class="action-btn" id="gen-copy"><svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>이미지 복사</button>
+      <button class="action-btn open-btn" id="gen-download"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>PNG 저장</button>
+    </div>
+  </div>
+</div><!-- /panel-make -->
+
 <!-- Status bar -->
 <div id="status-bar">
   <span class="status-dot"></span>
-  클립보드 붙여넣기 대기 중 — 어디서든 Ctrl+V 하면 인식합니다
+  <span id="status-text">클립보드 붙여넣기 대기 중 — 어디서든 Ctrl+V 하면 인식합니다</span>
 </div>
 
-<!-- jsQR -->
+<!-- jsQR (스캔) / qrcode-generator (생성) -->
 <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
 <script>
 const dropZone   = document.getElementById('drop-zone');
 const fileInput  = document.getElementById('file-input');
@@ -687,11 +856,14 @@ document.addEventListener('paste', e => {
   for (const item of items) {
     if (item.type.startsWith('image/')) {
       e.preventDefault();
+      setMode('scan');   // 생성 탭에서 이미지를 붙여넣어도 바로 스캔한다
       clearAll();
       processBlob(item.getAsFile());
       return;
     }
   }
+  // 입력칸에 텍스트를 붙여넣는 건 정상 동작이므로 건드리지 않는다
+  if (e.target.closest('textarea, input') || currentMode === 'make') return;
   showError('클립보드에 이미지가 없습니다. 스크린샷이나 QR 이미지를 먼저 복사하세요.');
 });
 
@@ -734,6 +906,111 @@ dropZone.addEventListener('keydown', e => {
 window.addEventListener('focus', () => dropZone.classList.add('paste-ready'));
 window.addEventListener('blur',  () => dropZone.classList.remove('paste-ready'));
 dropZone.classList.add('paste-ready');
+
+// ── Mode tabs (scan / make) ──────────────────────────────────
+const tabBtns    = document.querySelectorAll('.tab-btn');
+const panelScan  = document.getElementById('panel-scan');
+const panelMake  = document.getElementById('panel-make');
+const statusText = document.getElementById('status-text');
+let currentMode  = 'scan';
+
+function setMode(mode) {
+  currentMode = mode;
+  tabBtns.forEach(b => {
+    const on = b.dataset.mode === mode;
+    b.classList.toggle('active', on);
+    b.setAttribute('aria-selected', on);
+  });
+  panelScan.hidden = mode !== 'scan';
+  panelMake.hidden = mode !== 'make';
+  statusText.textContent = mode === 'scan'
+    ? '클립보드 붙여넣기 대기 중 — 어디서든 Ctrl+V 하면 인식합니다'
+    : '입력하는 즉시 QR 코드가 만들어집니다';
+  // #make 로 공유하면 생성 탭이 바로 열린다
+  history.replaceState(null, '', mode === 'make' ? '#make' : location.pathname + location.search);
+  if (mode === 'make') genInput.focus();
+}
+tabBtns.forEach(b => b.addEventListener('click', () => setMode(b.dataset.mode)));
+
+// ── QR generator ─────────────────────────────────────────────
+const genInput    = document.getElementById('gen-input');
+const genCount    = document.getElementById('gen-count');
+const genSize     = document.getElementById('gen-size');
+const genEcc      = document.getElementById('gen-ecc');
+const genError    = document.getElementById('gen-error');
+const genOutput   = document.getElementById('gen-output');
+const genCanvas   = document.getElementById('gen-canvas');
+const genCopyBtn  = document.getElementById('gen-copy');
+const genDownBtn  = document.getElementById('gen-download');
+
+// 한글 등 비ASCII 문자도 깨지지 않도록 UTF-8로 인코딩
+qrcode.stringToBytes = qrcode.stringToBytesFuncs['UTF-8'];
+
+function renderQR() {
+  const text = genInput.value;
+  genCount.textContent = text.length + '자';
+  genError.classList.remove('visible');
+  if (!text.trim()) { genOutput.hidden = true; return; }
+
+  let qr;
+  try {
+    qr = qrcode(0, genEcc.value);   // 0 = 내용 길이에 맞춰 버전 자동 선택
+    qr.addData(text, 'Byte');
+    qr.make();
+  } catch {
+    genError.textContent = '내용이 너무 깁니다. 글자 수를 줄이거나 오류 복원 단계를 낮춰 보세요.';
+    genError.classList.add('visible');
+    genOutput.hidden = true;
+    return;
+  }
+
+  // 모듈 하나를 정수 픽셀로 그려야 경계가 흐려지지 않는다 (여백 4칸은 QR 표준)
+  const n = qr.getModuleCount(), QUIET = 4;
+  const cell = Math.max(1, Math.floor(+genSize.value / (n + QUIET * 2)));
+  const px = cell * (n + QUIET * 2);
+  genCanvas.width = genCanvas.height = px;
+  const g = genCanvas.getContext('2d');
+  g.fillStyle = '#fff';
+  g.fillRect(0, 0, px, px);
+  g.fillStyle = '#000';
+  for (let r = 0; r < n; r++)
+    for (let c = 0; c < n; c++)
+      if (qr.isDark(r, c)) g.fillRect((c + QUIET) * cell, (r + QUIET) * cell, cell, cell);
+  genOutput.hidden = false;
+}
+
+[genInput, genSize, genEcc].forEach(el => el.addEventListener('input', renderQR));
+
+function flashBtn(btn, label) {
+  const orig = btn.innerHTML;
+  btn.innerHTML = '<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>' + label;
+  btn.classList.add('copied');
+  setTimeout(() => { btn.innerHTML = orig; btn.classList.remove('copied'); }, 1500);
+}
+
+genCopyBtn.addEventListener('click', () => {
+  genCanvas.toBlob(blob => {
+    navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })])
+      .then(() => flashBtn(genCopyBtn, '복사됨'))
+      .catch(() => {
+        genError.textContent = '이 브라우저에서는 이미지 복사가 지원되지 않습니다. PNG 저장을 이용하세요.';
+        genError.classList.add('visible');
+      });
+  }, 'image/png');
+});
+
+genDownBtn.addEventListener('click', () => {
+  genCanvas.toBlob(blob => {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'qr.png';
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    flashBtn(genDownBtn, '저장됨');
+  }, 'image/png');
+});
+
+if (location.hash === '#make') setMode('make');
 </script>
 </body>
 </html>
