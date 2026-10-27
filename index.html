@@ -22,6 +22,29 @@
                  url('letstrace.s-trace-ruled.otf') format('opentype');
         }
 
+        /* 룰렛 전용 에이투지체 */
+        @font-face {
+            font-family: 'A2Z';
+            src: url('font/A2Z-Regular.ttf') format('truetype');
+            font-weight: 400;
+            font-style: normal;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'A2Z';
+            src: url('font/A2Z-Bold.ttf') format('truetype');
+            font-weight: 700;
+            font-style: normal;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'A2Z';
+            src: url('font/A2Z-Black.ttf') format('truetype');
+            font-weight: 900;
+            font-style: normal;
+            font-display: swap;
+        }
+
         body {
             font-family: 'Noto Sans KR', sans-serif;
             background-size: cover;
@@ -146,6 +169,13 @@
         #english-note-input[placeholder]:empty:before { content: attr(placeholder); color: #9ca3af; pointer-events: none; display: block; }
 
         /* --- Roulette Widget (전체화면 모드) --- */
+        #widget-roulette, #roulette-modal {
+            font-family: 'A2Z', 'Noto Sans KR', sans-serif;
+        }
+        #widget-roulette :is(button, input, select, textarea),
+        #roulette-modal button {
+            font-family: inherit;
+        }
         #widget-roulette {
             background: #1a1a2e;
             color: #eee;
@@ -225,7 +255,7 @@
         .roulette-panel {
             background: #16213e; border-radius: 16px; padding: 22px; width: 340px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.4); display: flex; flex-direction: column; gap: 16px;
-            font-family: 'Segoe UI', sans-serif; flex-shrink: 0;
+            font-family: inherit; flex-shrink: 0;
             max-height: 90vh; overflow-y: auto;
         }
         .roulette-panel h2 { font-size: 1rem; color: #f0a500; font-weight: bold; margin: 0; }
@@ -724,6 +754,10 @@
                 this.canvas = document.getElementById('roulette-wheel');
                 this.ctx = this.canvas.getContext('2d');
 
+                // Canvas 글자도 웹폰트 로딩이 끝나면 다시 그린다.
+                document.fonts.load("700 24px 'A2Z'").then(() => this.resizeCanvas())
+                    .catch(error => console.warn('룰렛 폰트 로딩 실패:', error));
+
                 this.restore();
                 this.refreshPresets();
                 this.onRoleToggle(true);
@@ -1047,7 +1081,7 @@
                     this.ctx.save(); this.ctx.translate(this.cx, this.cy); this.ctx.rotate(start + arc / 2);
                     const maxLen = Math.min(this.radius * 0.72, 220);
                     const fontSize = Math.max(11, Math.min(24, maxLen / (seg.label.length * 0.62)));
-                    this.ctx.font = `bold ${fontSize}px 'Noto Sans KR', 'Segoe UI', sans-serif`;
+                    this.ctx.font = `bold ${fontSize}px 'A2Z', 'Noto Sans KR', sans-serif`;
                     this.ctx.fillStyle = '#fff'; this.ctx.textAlign = 'right'; this.ctx.textBaseline = 'middle';
                     this.ctx.shadowColor = 'rgba(0,0,0,0.6)'; this.ctx.shadowBlur = 4;
                     let text = seg.label;
