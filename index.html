@@ -718,11 +718,11 @@
         function toggleTimer() {
             const btn = document.getElementById('timer-toggle-btn'), icon = btn.querySelector('i'), timerInput = document.getElementById('timer-display');
             if (isTimerRunning) { clearInterval(timerInterval); isTimerRunning = false; btn.classList.remove('stop'); icon.className = 'fas fa-play'; timerInput.readOnly = false; } 
-            else { if (timeRemaining <= 0) return; prepareTimerAudio(); isTimerRunning = true; btn.classList.add('stop'); icon.className = 'fas fa-pause'; timerInput.readOnly = true; timerInterval = setInterval(() => { timeRemaining--; updateTimerDisplay(); if (timeRemaining <= 0) { clearInterval(timerInterval); isTimerRunning = false; btn.classList.remove('stop'); icon.className = 'fas fa-play'; timerInput.readOnly = false; ringBell(); } }, 1000); }
+            else { if (timeRemaining <= 0) return; stopTimerAlert(); prepareTimerAudio(); isTimerRunning = true; btn.classList.add('stop'); icon.className = 'fas fa-pause'; timerInput.readOnly = true; timerInterval = setInterval(() => { timeRemaining--; updateTimerDisplay(); if (timeRemaining <= 0) { clearInterval(timerInterval); isTimerRunning = false; btn.classList.remove('stop'); icon.className = 'fas fa-play'; timerInput.readOnly = false; ringBell(); } }, 1000); }
         }
-        function resetTimer() { if (isTimerRunning) { clearInterval(timerInterval); isTimerRunning = false; document.getElementById('timer-toggle-btn').classList.remove('stop'); document.querySelector('#timer-toggle-btn i').className = 'fas fa-play'; } document.getElementById('timer-display').readOnly = false; timeRemaining = timerDuration; updateTimerDisplay(); }
+        function resetTimer() { stopTimerAlert(); if (isTimerRunning) { clearInterval(timerInterval); isTimerRunning = false; document.getElementById('timer-toggle-btn').classList.remove('stop'); document.querySelector('#timer-toggle-btn i').className = 'fas fa-play'; } document.getElementById('timer-display').readOnly = false; timeRemaining = timerDuration; updateTimerDisplay(); }
         function parseTimeInput(inputStr) { if (!inputStr) return 0; let parts = inputStr.split(':'); if (parts.length === 2) return (parseInt(parts[0]) || 0) * 60 + (parseInt(parts[1]) || 0); else if (parts.length === 1) return parseInt(parts[0]) || 0; return 0; }
-        let timerAudioContext = null;
+        let timerAudioContext = null, timerAlert = null;
         function prepareTimerAudio() {
             // Create/resume from the explicit Start gesture, before the countdown ends.
             try {
@@ -734,29 +734,53 @@
                 }
             } catch (e) { /* Audio availability must not prevent the timer from starting. */ }
         }
+        function stopTimerAlert() {
+            if (!timerAlert) return;
+            const alert = timerAlert;
+            timerAlert = null;
+            // A short fade avoids a click when cancelling an audible note.
+            const now = alert.context.currentTime;
+            alert.volume.gain.cancelScheduledValues(now);
+            alert.volume.gain.setValueAtTime(alert.volume.gain.value, now);
+            alert.volume.gain.linearRampToValueAtTime(0, now + 0.015);
+            try { alert.oscillator.stop(now + 0.02); }
+            catch (e) { alert.oscillator.disconnect(); alert.envelope.disconnect(); alert.volume.disconnect(); }
+        }
         function ringBell() {
+            stopTimerAlert();
             const context = timerAudioContext;
             if (!context || context.state !== 'running') return;
-            // Two soft, decaying notes; no downloaded sound file is required.
             try {
-                const start = context.currentTime;
-                [880, 1174.66].forEach((frequency, index) => {
-                    const oscillator = context.createOscillator();
-                    const gain = context.createGain();
-                    const noteStart = start + index * 0.22;
-                    oscillator.type = 'sine';
-                    oscillator.frequency.setValueAtTime(frequency, noteStart);
-                    gain.gain.setValueAtTime(0, noteStart);
-                    gain.gain.linearRampToValueAtTime(0.18, noteStart + 0.01);
-                    gain.gain.exponentialRampToValueAtTime(0.001, noteStart + 0.6);
-                    gain.gain.linearRampToValueAtTime(0, noteStart + 0.65);
-                    oscillator.connect(gain);
-                    gain.connect(context.destination);
-                    oscillator.onended = () => { oscillator.disconnect(); gain.disconnect(); };
-                    oscillator.start(noteStart);
-                    oscillator.stop(noteStart + 0.65);
-                });
-            } catch (e) { /* Keep completion controls usable if audio becomes unavailable. */ }
+                const oscillator = context.createOscillator();
+                const envelope = context.createGain();
+                const volume = context.createGain();
+                const alert = { context, oscillator, envelope, volume };
+                timerAlert = alert;
+                // Ten alternating pulses over five seconds, with bounded gain.
+                const start = context.currentTime + 0.03;
+                oscillator.type = 'triangle';
+                envelope.gain.setValueAtTime(0, context.currentTime);
+                for (let index = 0; index < 10; index++) {
+                    const noteStart = start + index * 0.5;
+                    oscillator.frequency.setValueAtTime(index % 2 ? 1174.66 : 880, noteStart);
+                    envelope.gain.setValueAtTime(0, noteStart);
+                    envelope.gain.linearRampToValueAtTime(0.24, noteStart + 0.02);
+                    envelope.gain.setValueAtTime(0.24, noteStart + 0.36);
+                    envelope.gain.linearRampToValueAtTime(0, noteStart + 0.48);
+                }
+                oscillator.connect(envelope);
+                envelope.connect(volume);
+                volume.connect(context.destination);
+                oscillator.onended = () => {
+                    oscillator.disconnect(); envelope.disconnect(); volume.disconnect();
+                    if (timerAlert === alert) timerAlert = null;
+                };
+                oscillator.start(start);
+                oscillator.stop(start + 5);
+            } catch (e) {
+                stopTimerAlert();
+                // Keep completion controls usable if audio becomes unavailable.
+            }
         }
 
         let currentNoteFontSize = 80;
