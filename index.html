@@ -436,11 +436,6 @@
 </head>
 <body id="main-body">
 
-    <audio id="bell-sound" preload="auto">
-        <!-- 기존 탁상벨 음원 폴백용. 룰렛 사운드는 코드 내 자체 생성됨 -->
-        <source src="my-bell.mp3" type="audio/mpeg">
-    </audio>
-
     <input type="file" id="bg-upload-input" accept="image/*" style="display: none;">
 
     <div class="bg-selector-container">
@@ -723,11 +718,46 @@
         function toggleTimer() {
             const btn = document.getElementById('timer-toggle-btn'), icon = btn.querySelector('i'), timerInput = document.getElementById('timer-display');
             if (isTimerRunning) { clearInterval(timerInterval); isTimerRunning = false; btn.classList.remove('stop'); icon.className = 'fas fa-play'; timerInput.readOnly = false; } 
-            else { if (timeRemaining <= 0) return; isTimerRunning = true; btn.classList.add('stop'); icon.className = 'fas fa-pause'; timerInput.readOnly = true; timerInterval = setInterval(() => { timeRemaining--; updateTimerDisplay(); if (timeRemaining <= 0) { clearInterval(timerInterval); isTimerRunning = false; btn.classList.remove('stop'); icon.className = 'fas fa-play'; timerInput.readOnly = false; ringBell(); } }, 1000); }
+            else { if (timeRemaining <= 0) return; prepareTimerAudio(); isTimerRunning = true; btn.classList.add('stop'); icon.className = 'fas fa-pause'; timerInput.readOnly = true; timerInterval = setInterval(() => { timeRemaining--; updateTimerDisplay(); if (timeRemaining <= 0) { clearInterval(timerInterval); isTimerRunning = false; btn.classList.remove('stop'); icon.className = 'fas fa-play'; timerInput.readOnly = false; ringBell(); } }, 1000); }
         }
         function resetTimer() { if (isTimerRunning) { clearInterval(timerInterval); isTimerRunning = false; document.getElementById('timer-toggle-btn').classList.remove('stop'); document.querySelector('#timer-toggle-btn i').className = 'fas fa-play'; } document.getElementById('timer-display').readOnly = false; timeRemaining = timerDuration; updateTimerDisplay(); }
         function parseTimeInput(inputStr) { if (!inputStr) return 0; let parts = inputStr.split(':'); if (parts.length === 2) return (parseInt(parts[0]) || 0) * 60 + (parseInt(parts[1]) || 0); else if (parts.length === 1) return parseInt(parts[0]) || 0; return 0; }
-        function ringBell() { const audio = document.getElementById('bell-sound'); if (audio) { audio.currentTime = 0; audio.play().catch(e => console.log("Audio play failed:", e)); } }
+        let timerAudioContext = null;
+        function prepareTimerAudio() {
+            // Create/resume from the explicit Start gesture, before the countdown ends.
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContext) return;
+                if (!timerAudioContext || timerAudioContext.state === 'closed') timerAudioContext = new AudioContext();
+                if (timerAudioContext.state !== 'running') {
+                    timerAudioContext.resume().catch(() => {});
+                }
+            } catch (e) { /* Audio availability must not prevent the timer from starting. */ }
+        }
+        function ringBell() {
+            const context = timerAudioContext;
+            if (!context || context.state !== 'running') return;
+            // Two soft, decaying notes; no downloaded sound file is required.
+            try {
+                const start = context.currentTime;
+                [880, 1174.66].forEach((frequency, index) => {
+                    const oscillator = context.createOscillator();
+                    const gain = context.createGain();
+                    const noteStart = start + index * 0.22;
+                    oscillator.type = 'sine';
+                    oscillator.frequency.setValueAtTime(frequency, noteStart);
+                    gain.gain.setValueAtTime(0, noteStart);
+                    gain.gain.linearRampToValueAtTime(0.18, noteStart + 0.01);
+                    gain.gain.exponentialRampToValueAtTime(0.001, noteStart + 0.6);
+                    gain.gain.linearRampToValueAtTime(0, noteStart + 0.65);
+                    oscillator.connect(gain);
+                    gain.connect(context.destination);
+                    oscillator.onended = () => { oscillator.disconnect(); gain.disconnect(); };
+                    oscillator.start(noteStart);
+                    oscillator.stop(noteStart + 0.65);
+                });
+            } catch (e) { /* Keep completion controls usable if audio becomes unavailable. */ }
+        }
 
         let currentNoteFontSize = 80;
         function changeNoteFontSize(delta) { currentNoteFontSize += delta; if (currentNoteFontSize < 30) currentNoteFontSize = 30; if (currentNoteFontSize > 200) currentNoteFontSize = 200; document.getElementById('english-note-input').style.fontSize = currentNoteFontSize + 'px'; }
